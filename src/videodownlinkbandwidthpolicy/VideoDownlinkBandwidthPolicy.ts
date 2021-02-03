@@ -4,6 +4,7 @@
 import ClientMetricReport from '../clientmetricreport/ClientMetricReport';
 import VideoStreamIdSet from '../videostreamidset/VideoStreamIdSet';
 import VideoStreamIndex from '../videostreamindex/VideoStreamIndex';
+import VideoDownlinkObserver from './VideoDownlinkObserver';
 
 /**
  * [[VideoDownlinkBandwidthPolicy]] makes decisions about downlink
@@ -37,4 +38,14 @@ export default interface VideoDownlinkBandwidthPolicy {
    * subscribed to, and return the set.
    */
   chooseSubscriptions(): VideoStreamIdSet;
+
+  /**
+   * (Optional) Add VideoDownlinkObserver to observer resubscribe requests
+   */
+  addObserver?(observer: VideoDownlinkObserver): void;
+
+  /**
+   * (Optional) Removes the VideoDownlinkObserver.
+   */
+  removeObserver?(observer: VideoDownlinkObserver): void;
 }

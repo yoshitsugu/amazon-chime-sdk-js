@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>LinkMediaStats | amazon-chime-sdk-js</title>
+	<title>VideoPreference | amazon-chime-sdk-js</title>
 	<meta name="description" content="Documentation for amazon-chime-sdk-js">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,10 +56,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="linkmediastats.html">LinkMediaStats</a>
+					<a href="videopreference.html">VideoPreference</a>
 				</li>
 			</ul>
-			<h1>Class LinkMediaStats</h1>
+			<h1>Class VideoPreference</h1>
 		</div>
 	</div>
 </header>
@@ -70,7 +70,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">LinkMediaStats</span>
+						<span class="target">VideoPreference</span>
 					</li>
 				</ul>
 			</section>
@@ -81,17 +81,21 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="linkmediastats.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="videopreference.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="linkmediastats.html#bandwidthestimatekbps" class="tsd-kind-icon">bandwidth<wbr>Estimate<wbr>Kbps</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="linkmediastats.html#nackcount" class="tsd-kind-icon">nack<wbr>Count</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="linkmediastats.html#packetslost" class="tsd-kind-icon">packets<wbr>Lost</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="linkmediastats.html#rttms" class="tsd-kind-icon">rtt<wbr>Ms</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="linkmediastats.html#usedbandwidthkbps" class="tsd-kind-icon">used<wbr>Bandwidth<wbr>Kbps</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="videopreference.html#attendeeid" class="tsd-kind-icon">attendee<wbr>Id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="videopreference.html#priority" class="tsd-kind-icon">priority</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="videopreference.html#targetsize" class="tsd-kind-icon">target<wbr>Size</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="videopreference.html#targetsizetobitratekbps" class="tsd-kind-icon">target<wbr>Size<wbr>ToBitrate<wbr>Kbps</a></li>
 							</ul>
 						</section>
 					</div>
@@ -103,16 +107,28 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Link<wbr>Media<wbr>Stats<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="linkmediastats.html" class="tsd-signature-type">LinkMediaStats</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Video<wbr>Preference<span class="tsd-signature-symbol">(</span>attendeeId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, priority<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, targetSize<span class="tsd-signature-symbol">?: </span><a href="../enums/targetdisplaysize.html" class="tsd-signature-type">TargetDisplaySize</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="videopreference.html" class="tsd-signature-type">VideoPreference</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/aws/amazon-chime-sdk-js/blob/master/src/videodownlinkbandwidthpolicy/VideoAdaptiveProbePolicy.ts#L15">src/videodownlinkbandwidthpolicy/VideoAdaptiveProbePolicy.ts:15</a></li>
+									<li>Defined in <a href="https://github.com/aws/amazon-chime-sdk-js/blob/master/src/videodownlinkbandwidthpolicy/VideoPreference.ts#L20">src/videodownlinkbandwidthpolicy/VideoPreference.ts:20</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="linkmediastats.html" class="tsd-signature-type">LinkMediaStats</a></h4>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>attendeeId: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>priority: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> targetSize: <a href="../enums/targetdisplaysize.html" class="tsd-signature-type">TargetDisplaySize</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="videopreference.html" class="tsd-signature-type">VideoPreference</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -120,54 +136,75 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="bandwidthestimatekbps" class="tsd-anchor"></a>
-					<h3>bandwidth<wbr>Estimate<wbr>Kbps</h3>
-					<div class="tsd-signature tsd-kind-icon">bandwidth<wbr>Estimate<wbr>Kbps<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="attendeeid" class="tsd-anchor"></a>
+					<h3>attendee<wbr>Id</h3>
+					<div class="tsd-signature tsd-kind-icon">attendee<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/aws/amazon-chime-sdk-js/blob/master/src/videodownlinkbandwidthpolicy/VideoAdaptiveProbePolicy.ts#L23">src/videodownlinkbandwidthpolicy/VideoAdaptiveProbePolicy.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/aws/amazon-chime-sdk-js/blob/master/src/videodownlinkbandwidthpolicy/VideoPreference.ts#L10">src/videodownlinkbandwidthpolicy/VideoPreference.ts:10</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The attendee ID this preference relates to.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="nackcount" class="tsd-anchor"></a>
-					<h3>nack<wbr>Count</h3>
-					<div class="tsd-signature tsd-kind-icon">nack<wbr>Count<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="priority" class="tsd-anchor"></a>
+					<h3>priority</h3>
+					<div class="tsd-signature tsd-kind-icon">priority<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/aws/amazon-chime-sdk-js/blob/master/src/videodownlinkbandwidthpolicy/VideoAdaptiveProbePolicy.ts#L26">src/videodownlinkbandwidthpolicy/VideoAdaptiveProbePolicy.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/aws/amazon-chime-sdk-js/blob/master/src/videodownlinkbandwidthpolicy/VideoPreference.ts#L15">src/videodownlinkbandwidthpolicy/VideoPreference.ts:15</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The relative priority of this attendee against others.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="packetslost" class="tsd-anchor"></a>
-					<h3>packets<wbr>Lost</h3>
-					<div class="tsd-signature tsd-kind-icon">packets<wbr>Lost<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="targetsize" class="tsd-anchor"></a>
+					<h3>target<wbr>Size</h3>
+					<div class="tsd-signature tsd-kind-icon">target<wbr>Size<span class="tsd-signature-symbol">:</span> <a href="../enums/targetdisplaysize.html" class="tsd-signature-type">TargetDisplaySize</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/aws/amazon-chime-sdk-js/blob/master/src/videodownlinkbandwidthpolicy/VideoAdaptiveProbePolicy.ts#L25">src/videodownlinkbandwidthpolicy/VideoAdaptiveProbePolicy.ts:25</a></li>
+							<li>Defined in <a href="https://github.com/aws/amazon-chime-sdk-js/blob/master/src/videodownlinkbandwidthpolicy/VideoPreference.ts#L20">src/videodownlinkbandwidthpolicy/VideoPreference.ts:20</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The desired maximum simulcast layers to receive.</p>
+						</div>
+					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="rttms" class="tsd-anchor"></a>
-					<h3>rtt<wbr>Ms</h3>
-					<div class="tsd-signature tsd-kind-icon">rtt<wbr>Ms<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/aws/amazon-chime-sdk-js/blob/master/src/videodownlinkbandwidthpolicy/VideoAdaptiveProbePolicy.ts#L27">src/videodownlinkbandwidthpolicy/VideoAdaptiveProbePolicy.ts:27</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="usedbandwidthkbps" class="tsd-anchor"></a>
-					<h3>used<wbr>Bandwidth<wbr>Kbps</h3>
-					<div class="tsd-signature tsd-kind-icon">used<wbr>Bandwidth<wbr>Kbps<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/aws/amazon-chime-sdk-js/blob/master/src/videodownlinkbandwidthpolicy/VideoAdaptiveProbePolicy.ts#L24">src/videodownlinkbandwidthpolicy/VideoAdaptiveProbePolicy.ts:24</a></li>
-						</ul>
-					</aside>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="targetsizetobitratekbps" class="tsd-anchor"></a>
+					<h3>target<wbr>Size<wbr>ToBitrate<wbr>Kbps</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">target<wbr>Size<wbr>ToBitrate<wbr>Kbps<span class="tsd-signature-symbol">(</span>targetSize<span class="tsd-signature-symbol">: </span><a href="../enums/targetdisplaysize.html" class="tsd-signature-type">TargetDisplaySize</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/aws/amazon-chime-sdk-js/blob/master/src/videodownlinkbandwidthpolicy/VideoPreference.ts#L32">src/videodownlinkbandwidthpolicy/VideoPreference.ts:32</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>targetSize: <a href="../enums/targetdisplaysize.html" class="tsd-signature-type">TargetDisplaySize</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -184,25 +221,22 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class">
-						<a href="linkmediastats.html" class="tsd-kind-icon">Link<wbr>Media<wbr>Stats</a>
+						<a href="videopreference.html" class="tsd-kind-icon">Video<wbr>Preference</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="linkmediastats.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="videopreference.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="linkmediastats.html#bandwidthestimatekbps" class="tsd-kind-icon">bandwidth<wbr>Estimate<wbr>Kbps</a>
+								<a href="videopreference.html#attendeeid" class="tsd-kind-icon">attendee<wbr>Id</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="linkmediastats.html#nackcount" class="tsd-kind-icon">nack<wbr>Count</a>
+								<a href="videopreference.html#priority" class="tsd-kind-icon">priority</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="linkmediastats.html#packetslost" class="tsd-kind-icon">packets<wbr>Lost</a>
+								<a href="videopreference.html#targetsize" class="tsd-kind-icon">target<wbr>Size</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="linkmediastats.html#rttms" class="tsd-kind-icon">rtt<wbr>Ms</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="linkmediastats.html#usedbandwidthkbps" class="tsd-kind-icon">used<wbr>Bandwidth<wbr>Kbps</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="videopreference.html#targetsizetobitratekbps" class="tsd-kind-icon">target<wbr>Size<wbr>ToBitrate<wbr>Kbps</a>
 							</li>
 						</ul>
 					</li>

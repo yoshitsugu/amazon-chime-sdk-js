@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Added new downlink policy `VideoPriorityBasedPolicy`, providing the ability to explicitly request remote video sources to receive and set their respective priorities.  See 'guides/11_Priority_Based_Downlink_Policy.md' for more details and a code walkthrough of using the new policy.
+
+### Added
 - Add optional header parameter to the MeetingPOSTLogger
 
 ### Changed

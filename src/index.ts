@@ -212,6 +212,7 @@ import Some from './maybe/Some';
 import StatsCollector from './statscollector/StatsCollector';
 import StreamMetricReport from './clientmetricreport/StreamMetricReport';
 import SubscribeAndReceiveSubscribeAckTask from './task/SubscribeAndReceiveSubscribeAckTask';
+import TargetDisplaySize from './videodownlinkbandwidthpolicy/TargetDisplaySize';
 import Task from './task/Task';
 import TaskCanceler from './taskcanceler/TaskCanceler';
 import TaskStatus from './task/TaskStatus';
@@ -221,9 +222,11 @@ import TransceiverController from './transceivercontroller/TransceiverController
 import TypeError from './devicecontroller/TypeError';
 import UnusableAudioWarningConnectionHealthPolicy from './connectionhealthpolicy/UnusableAudioWarningConnectionHealthPolicy';
 import Versioning from './versioning/Versioning';
+import VideoAdaptivePolicy from './videodownlinkbandwidthpolicy/VideoAdaptivePolicy';
 import VideoAdaptiveProbePolicy from './videodownlinkbandwidthpolicy/VideoAdaptiveProbePolicy';
 import VideoCaptureAndEncodeParameter from './videocaptureandencodeparameter/VideoCaptureAndEncodeParameter';
 import VideoDownlinkBandwidthPolicy from './videodownlinkbandwidthpolicy/VideoDownlinkBandwidthPolicy';
+import VideoDownlinkObserver from './videodownlinkbandwidthpolicy/VideoDownlinkObserver';
 import VideoElementFactory from './videoelementfactory/VideoElementFactory';
 import VideoFrameBuffer from './videoframeprocessor/VideoFrameBuffer';
 import VideoFrameProcessor from './videoframeprocessor/VideoFrameProcessor';
@@ -232,6 +235,8 @@ import VideoFrameProcessorPipelineObserver from './videoframeprocessor/VideoFram
 import VideoInputDevice from './devicecontroller/VideoInputDevice';
 import VideoLogEvent from './statscollector/VideoLogEvent';
 import VideoOnlyTransceiverController from './transceivercontroller/VideoOnlyTransceiverController';
+import VideoPreference from './videodownlinkbandwidthpolicy/VideoPreference';
+import VideoPriorityBasedPolicy from './videodownlinkbandwidthpolicy/VideoPriorityBasedPolicy';
 import VideoQualitySettings from './devicecontroller/VideoQualitySettings';
 import VideoSource from './videosource/VideoSource';
 import VideoStreamDescription from './videostreamindex/VideoStreamDescription';
@@ -475,6 +480,7 @@ export {
   StatsCollector,
   StreamMetricReport,
   SubscribeAndReceiveSubscribeAckTask,
+  TargetDisplaySize,
   Task,
   TaskCanceler,
   TaskStatus,
@@ -484,9 +490,11 @@ export {
   TypeError,
   UnusableAudioWarningConnectionHealthPolicy,
   Versioning,
+  VideoAdaptivePolicy,
   VideoAdaptiveProbePolicy,
   VideoCaptureAndEncodeParameter,
   VideoDownlinkBandwidthPolicy,
+  VideoDownlinkObserver,
   VideoElementFactory,
   VideoFrameBuffer,
   VideoFrameProcessor,
@@ -495,6 +503,8 @@ export {
   VideoInputDevice,
   VideoLogEvent,
   VideoOnlyTransceiverController,
+  VideoPreference,
+  VideoPriorityBasedPolicy,
   VideoQualitySettings,
   VideoSource,
   VideoStreamDescription,
