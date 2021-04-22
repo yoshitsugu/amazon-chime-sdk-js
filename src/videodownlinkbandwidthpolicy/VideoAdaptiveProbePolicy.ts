@@ -9,6 +9,7 @@ import VideoStreamIndex from '../videostreamindex/VideoStreamIndex';
 import VideoAdaptivePolicy from './VideoAdaptivePolicy';
 import VideoDownlinkObserver from './VideoDownlinkObserver';
 import VideoPreference from './VideoPreference';
+import VideoPreferences from './VideoPreferences';
 
 export default class VideoAdaptiveProbePolicy extends VideoAdaptivePolicy {
   // This class contains pass through methods to the parent class so that we can
@@ -21,23 +22,25 @@ export default class VideoAdaptiveProbePolicy extends VideoAdaptivePolicy {
   updateIndex(videoIndex: VideoStreamIndex): void {
     super.updateIndex(videoIndex);
 
-    const preferences: VideoPreference[] = [];
+    const newPreferences = VideoPreferences.prepare();
     let containsContent = false;
     const remoteInfos: VideoStreamDescription[] = videoIndex.remoteStreamDescriptions();
     // If there is active content then set that as high priority, and the rest at lower
     for (const info of remoteInfos) {
-      if (!preferences.some(preference => preference.attendeeId === info.attendeeId)) {
+      // I don't know why we need to do this duplicate check.
+      if (!newPreferences.some(preference => preference.attendeeId === info.attendeeId)) {
         // For now always subscribe to content even if higher bandwidth then target
         if (info.attendeeId.endsWith(ContentShareConstants.Modality)) {
-          preferences.push(new VideoPreference(info.attendeeId, 1));
+          newPreferences.add(new VideoPreference(info.attendeeId, 1));
           containsContent = true;
         } else {
-          preferences.push(new VideoPreference(info.attendeeId, 2));
+          newPreferences.add(new VideoPreference(info.attendeeId, 2));
         }
       }
     }
+
     if (containsContent) {
-      this.videoPreferences = preferences;
+      this.videoPreferences = newPreferences.build();
       this.videoPreferencesUpdated = true;
     } else {
       this.videoPreferences = undefined;

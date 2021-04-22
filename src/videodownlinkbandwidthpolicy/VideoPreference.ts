@@ -1,9 +1,11 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+import Eq from './Eq';
+import PartialOrd from './PartialOrd';
 import TargetDisplaySize from './TargetDisplaySize';
 
-export default class VideoPreference {
+export default class VideoPreference implements Eq, PartialOrd {
   /**
    * The desired maximum simulcast layers to receive.
    */
@@ -17,6 +19,18 @@ export default class VideoPreference {
    */
   constructor(public attendeeId: string, public priority: number, targetSize?: TargetDisplaySize) {
     this.targetSize = targetSize !== undefined ? targetSize : TargetDisplaySize.High;
+  }
+
+  partialCompare(other: this): number {
+    return this.priority - other.priority;
+  }
+
+  equals(other: this): boolean {
+    return (
+      this.attendeeId === other.attendeeId &&
+      this.targetSize === other.targetSize &&
+      this.priority === other.priority
+    );
   }
 
   private static readonly LOW_BITRATE_KBPS = 300;

@@ -21,6 +21,7 @@ import {
 import TargetDisplaySize from '../../src/videodownlinkbandwidthpolicy/TargetDisplaySize';
 import VideoDownlinkObserver from '../../src/videodownlinkbandwidthpolicy/VideoDownlinkObserver';
 import VideoPreference from '../../src/videodownlinkbandwidthpolicy/VideoPreference';
+import { VideoPreferences } from '../../src/videodownlinkbandwidthpolicy/VideoPreferences';
 import VideoPriorityBasedPolicy from '../../src/videodownlinkbandwidthpolicy/VideoPriorityBasedPolicy';
 import SimulcastVideoStreamIndex from '../../src/videostreamindex/SimulcastVideoStreamIndex';
 import VideoTileController from '../../src/videotilecontroller/VideoTileController';
@@ -171,9 +172,9 @@ describe('VideoPriorityBasedPolicy', () => {
     it('can be reset', () => {
       updateIndexFrame(videoStreamIndex, 6, 0, 600);
       policy.updateIndex(videoStreamIndex);
-      const preferences: VideoPreference[] = [];
-      preferences.push(new VideoPreference('attendee-1', 1, TargetDisplaySize.High));
-      policy.chooseRemoteVideoSources(preferences);
+      const preferences = VideoPreferences.prepare();
+      preferences.add(new VideoPreference('attendee-1', 1, TargetDisplaySize.High));
+      policy.chooseRemoteVideoSources(preferences.build());
       const resub = policy.wantsResubscribe();
       expect(resub).to.equal(true);
       let received = policy.chooseSubscriptions();
@@ -189,9 +190,9 @@ describe('VideoPriorityBasedPolicy', () => {
       const policy = new VideoPriorityBasedPolicy(logger);
       updateIndexFrame(videoStreamIndex, 6, 0, 600);
       policy.updateIndex(videoStreamIndex);
-      const preferences: VideoPreference[] = [];
-      preferences.push(new VideoPreference('attendee-1', 1, TargetDisplaySize.High));
-      policy.chooseRemoteVideoSources(preferences);
+      const preferences = VideoPreferences.prepare();
+      preferences.add(new VideoPreference('attendee-1', 1, TargetDisplaySize.High));
+      policy.chooseRemoteVideoSources(preferences.build());
       const resub = policy.wantsResubscribe();
       expect(resub).to.equal(true);
       const received = policy.chooseSubscriptions();
@@ -259,9 +260,9 @@ describe('VideoPriorityBasedPolicy', () => {
       metricReport.globalMetricReport = new GlobalMetricReport();
       metricReport.globalMetricReport.currentMetrics['googAvailableReceiveBandwidth'] = 2400 * 1000;
       policy.updateMetrics(metricReport);
-      const preferences: VideoPreference[] = [];
-      preferences.push(new VideoPreference('attendee-3', 1));
-      policy.chooseRemoteVideoSources(preferences);
+      const preferences = VideoPreferences.prepare();
+      preferences.add(new VideoPreference('attendee-3', 1));
+      policy.chooseRemoteVideoSources(preferences.build());
 
       await callbackPromise;
     });
@@ -286,9 +287,9 @@ describe('VideoPriorityBasedPolicy', () => {
       resub = policy.wantsResubscribe();
       expect(resub).to.equal(false);
 
-      const preferences: VideoPreference[] = [];
-      preferences.push(new VideoPreference('attendee-5', 1));
-      policy.chooseRemoteVideoSources(preferences);
+      const preferences = VideoPreferences.prepare();
+      preferences.add(new VideoPreference('attendee-5', 1));
+      policy.chooseRemoteVideoSources(preferences.build());
       resub = policy.wantsResubscribe();
       expect(resub).to.equal(true);
       received = policy.chooseSubscriptions();
@@ -302,9 +303,9 @@ describe('VideoPriorityBasedPolicy', () => {
       metricReport.globalMetricReport = new GlobalMetricReport();
       metricReport.globalMetricReport.currentMetrics['googAvailableReceiveBandwidth'] = 2400 * 1000;
       policy.updateMetrics(metricReport);
-      let preferences: VideoPreference[] = [];
-      preferences.push(new VideoPreference('attendee-3', 1));
-      policy.chooseRemoteVideoSources(preferences);
+      const preferences = VideoPreferences.prepare();
+      preferences.add(new VideoPreference('attendee-3', 1));
+      policy.chooseRemoteVideoSources(preferences.build());
       let resub = policy.wantsResubscribe();
       expect(resub).to.equal(true);
       let received = policy.chooseSubscriptions();
@@ -313,8 +314,8 @@ describe('VideoPriorityBasedPolicy', () => {
       incrementTime(6100);
       metricReport.globalMetricReport.currentMetrics['googAvailableReceiveBandwidth'] = 2400 * 1000;
       policy.updateMetrics(metricReport);
-      preferences = [];
-      policy.chooseRemoteVideoSources(preferences);
+      preferences.clear();
+      policy.chooseRemoteVideoSources(preferences.build());
       resub = policy.wantsResubscribe();
       expect(resub).to.equal(true);
       received = policy.chooseSubscriptions();
@@ -328,22 +329,22 @@ describe('VideoPriorityBasedPolicy', () => {
       metricReport.globalMetricReport = new GlobalMetricReport();
       metricReport.globalMetricReport.currentMetrics['googAvailableReceiveBandwidth'] = 2400 * 1000;
       policy.updateMetrics(metricReport);
-      let preferences: VideoPreference[] = [];
-      preferences.push(new VideoPreference('attendee-3', 1));
-      policy.chooseRemoteVideoSources(preferences);
+      const preferences = VideoPreferences.prepare();
+      preferences.add(new VideoPreference('attendee-3', 1));
+      policy.chooseRemoteVideoSources(preferences.build());
       let resub = policy.wantsResubscribe();
       expect(resub).to.equal(true);
       let received = policy.chooseSubscriptions();
       expect(received.array()).to.deep.equal([6]);
 
       incrementTime(6100);
-      policy.chooseRemoteVideoSources(preferences);
+      policy.chooseRemoteVideoSources(preferences.build());
       resub = policy.wantsResubscribe();
       expect(resub).to.equal(false);
 
-      preferences = [];
-      preferences.push(new VideoPreference('attendee-2', 1));
-      policy.chooseRemoteVideoSources(preferences);
+      preferences.clear();
+      preferences.add(new VideoPreference('attendee-2', 1));
+      policy.chooseRemoteVideoSources(preferences.build());
       resub = policy.wantsResubscribe();
       expect(resub).to.equal(true);
       received = policy.chooseSubscriptions();
@@ -370,10 +371,10 @@ describe('VideoPriorityBasedPolicy', () => {
       metricReport.globalMetricReport = new GlobalMetricReport();
       metricReport.globalMetricReport.currentMetrics['googAvailableReceiveBandwidth'] =
         10000 * 1000;
-      let preferences: VideoPreference[] = [];
-      preferences.push(new VideoPreference('attendee-2', 1, TargetDisplaySize.Low));
-      preferences.push(new VideoPreference('attendee-1', 2, TargetDisplaySize.Medium));
-      policy.chooseRemoteVideoSources(preferences);
+      const preferences = VideoPreferences.prepare();
+      preferences.add(new VideoPreference('attendee-2', 1, TargetDisplaySize.Low));
+      preferences.add(new VideoPreference('attendee-1', 2, TargetDisplaySize.Medium));
+      policy.chooseRemoteVideoSources(preferences.build());
       let resub = policy.wantsResubscribe();
       expect(resub).to.equal(true);
       let received = policy.chooseSubscriptions();
@@ -385,10 +386,10 @@ describe('VideoPriorityBasedPolicy', () => {
 
       // Probe
       incrementTime(6100);
-      preferences = [];
-      preferences.push(new VideoPreference('attendee-2', 1, TargetDisplaySize.High));
-      preferences.push(new VideoPreference('attendee-1', 2, TargetDisplaySize.High));
-      policy.chooseRemoteVideoSources(preferences);
+      preferences.clear();
+      preferences.add(new VideoPreference('attendee-2', 1, TargetDisplaySize.High));
+      preferences.add(new VideoPreference('attendee-1', 2, TargetDisplaySize.High));
+      policy.chooseRemoteVideoSources(preferences.build());
       resub = policy.wantsResubscribe();
       expect(resub).to.equal(true);
       received = policy.chooseSubscriptions();
@@ -397,20 +398,20 @@ describe('VideoPriorityBasedPolicy', () => {
       tile2.stateRef().boundAttendeeId = 'attendee-2';
 
       incrementTime(6100);
-      preferences = [];
-      preferences.push(new VideoPreference('attendee-2', 1));
-      preferences.push(new VideoPreference('attendee-1', 1));
-      policy.chooseRemoteVideoSources(preferences);
+      preferences.clear();
+      preferences.add(new VideoPreference('attendee-2', 1));
+      preferences.add(new VideoPreference('attendee-1', 1));
+      policy.chooseRemoteVideoSources(preferences.build());
       metricReport.globalMetricReport.currentMetrics['googAvailableReceiveBandwidth'] = 9000 * 1000;
       policy.updateMetrics(metricReport);
       resub = policy.wantsResubscribe();
       expect(resub).to.equal(false);
 
       incrementTime(3000);
-      preferences = [];
-      preferences.push(new VideoPreference('attendee-2', 1));
-      preferences.push(new VideoPreference('attendee-1', 2));
-      policy.chooseRemoteVideoSources(preferences);
+      preferences.clear();
+      preferences.add(new VideoPreference('attendee-2', 1));
+      preferences.add(new VideoPreference('attendee-1', 2));
+      policy.chooseRemoteVideoSources(preferences.build());
       metricReport.globalMetricReport.currentMetrics['googAvailableReceiveBandwidth'] = 1200 * 1000;
       setPacketLoss(metricReport, 42, 160);
       policy.updateMetrics(metricReport);
@@ -484,12 +485,12 @@ describe('VideoPriorityBasedPolicy', () => {
     it('Probe fail', () => {
       updateIndexFrame(videoStreamIndex, 4, 300, 1200);
       policy.updateIndex(videoStreamIndex);
-      const preferences: VideoPreference[] = [];
-      preferences.push(new VideoPreference('attendee-1', 2));
-      preferences.push(new VideoPreference('attendee-2', 2));
-      preferences.push(new VideoPreference('attendee-3', 2));
-      preferences.push(new VideoPreference('attendee-4', 2));
-      policy.chooseRemoteVideoSources(preferences);
+      const preferences = VideoPreferences.prepare();
+      preferences.add(new VideoPreference('attendee-1', 2));
+      preferences.add(new VideoPreference('attendee-2', 2));
+      preferences.add(new VideoPreference('attendee-3', 2));
+      preferences.add(new VideoPreference('attendee-4', 2));
+      policy.chooseRemoteVideoSources(preferences.build());
       let resub = policy.wantsResubscribe();
       expect(resub).to.equal(true);
       let received = policy.chooseSubscriptions();
@@ -587,10 +588,10 @@ describe('VideoPriorityBasedPolicy', () => {
       metricReport.globalMetricReport = new GlobalMetricReport();
       metricReport.globalMetricReport.currentMetrics['googAvailableReceiveBandwidth'] =
         10000 * 1000;
-      const preferences: VideoPreference[] = [];
-      preferences.push(new VideoPreference('attendee-2', 1));
-      preferences.push(new VideoPreference('attendee-1', 2));
-      policy.chooseRemoteVideoSources(preferences);
+      const preferences = VideoPreferences.prepare();
+      preferences.add(new VideoPreference('attendee-2', 1));
+      preferences.add(new VideoPreference('attendee-1', 2));
+      policy.chooseRemoteVideoSources(preferences.build());
       let resub = policy.wantsResubscribe();
       expect(resub).to.equal(true);
       let received = policy.chooseSubscriptions();
@@ -623,8 +624,8 @@ describe('VideoPriorityBasedPolicy', () => {
       policy.updateMetrics(metricReport);
       resub = policy.wantsResubscribe();
       expect(resub).to.equal(false);
-      preferences.push(new VideoPreference('attendee-3', 3));
-      policy.chooseRemoteVideoSources(preferences);
+      preferences.add(new VideoPreference('attendee-3', 3));
+      policy.chooseRemoteVideoSources(preferences.build());
       resub = policy.wantsResubscribe();
       expect(resub).to.equal(false);
       const tiles = tileController.getAllRemoteVideoTiles();
@@ -665,11 +666,11 @@ describe('VideoPriorityBasedPolicy', () => {
       metricReport.globalMetricReport = new GlobalMetricReport();
       metricReport.globalMetricReport.currentMetrics['googAvailableReceiveBandwidth'] =
         10000 * 1000;
-      const preferences: VideoPreference[] = [];
-      preferences.push(new VideoPreference('attendee-1', 2));
-      preferences.push(new VideoPreference('attendee-2', 2));
-      preferences.push(new VideoPreference('attendee-3', 2));
-      policy.chooseRemoteVideoSources(preferences);
+      const preferences = VideoPreferences.prepare();
+      preferences.add(new VideoPreference('attendee-1', 2));
+      preferences.add(new VideoPreference('attendee-2', 2));
+      preferences.add(new VideoPreference('attendee-3', 2));
+      policy.chooseRemoteVideoSources(preferences.build());
       let resub = policy.wantsResubscribe();
       expect(resub).to.equal(true);
       let received = policy.chooseSubscriptions();
@@ -727,8 +728,8 @@ describe('VideoPriorityBasedPolicy', () => {
       policy.updateMetrics(metricReport);
       resub = policy.wantsResubscribe();
       expect(resub).to.equal(false);
-      preferences.push(new VideoPreference('attendee-4', 2));
-      policy.chooseRemoteVideoSources(preferences);
+      preferences.add(new VideoPreference('attendee-4', 2));
+      policy.chooseRemoteVideoSources(preferences.build());
       resub = policy.wantsResubscribe();
       expect(resub).to.equal(false);
       let tiles = tileController.getAllRemoteVideoTiles();
@@ -781,10 +782,10 @@ describe('VideoPriorityBasedPolicy', () => {
       metricReport.globalMetricReport = new GlobalMetricReport();
       metricReport.globalMetricReport.currentMetrics['googAvailableReceiveBandwidth'] =
         10000 * 1000;
-      let preferences: VideoPreference[] = [];
-      preferences.push(new VideoPreference('attendee-1', 2));
-      preferences.push(new VideoPreference('attendee-2', 2));
-      policy.chooseRemoteVideoSources(preferences);
+      const preferences = VideoPreferences.prepare();
+      preferences.add(new VideoPreference('attendee-1', 2));
+      preferences.add(new VideoPreference('attendee-2', 2));
+      policy.chooseRemoteVideoSources(preferences.build());
       let resub = policy.wantsResubscribe();
       expect(resub).to.equal(true);
       let received = policy.chooseSubscriptions();
@@ -831,8 +832,8 @@ describe('VideoPriorityBasedPolicy', () => {
       policy.updateMetrics(metricReport);
       resub = policy.wantsResubscribe();
       expect(resub).to.equal(false);
-      preferences.push(new VideoPreference('attendee-3', 2));
-      policy.chooseRemoteVideoSources(preferences);
+      preferences.add(new VideoPreference('attendee-3', 2));
+      policy.chooseRemoteVideoSources(preferences.build());
       resub = policy.wantsResubscribe();
       expect(resub).to.equal(false);
       const tiles = tileController.getAllRemoteVideoTiles();
@@ -863,10 +864,10 @@ describe('VideoPriorityBasedPolicy', () => {
       expect(resub).to.equal(false);
       expect(tile2.state().paused).to.equal(true);
 
-      preferences = [];
-      preferences.push(new VideoPreference('attendee-1', 2));
-      preferences.push(new VideoPreference('attendee-2', 2));
-      policy.chooseRemoteVideoSources(preferences);
+      preferences.clear();
+      preferences.add(new VideoPreference('attendee-1', 2));
+      preferences.add(new VideoPreference('attendee-2', 2));
+      policy.chooseRemoteVideoSources(preferences.build());
       resub = policy.wantsResubscribe();
       expect(resub).to.equal(false);
     });
@@ -878,10 +879,10 @@ describe('VideoPriorityBasedPolicy', () => {
       metricReport.globalMetricReport = new GlobalMetricReport();
       metricReport.globalMetricReport.currentMetrics['googAvailableReceiveBandwidth'] =
         10000 * 1000;
-      let preferences: VideoPreference[] = [];
-      preferences.push(new VideoPreference('attendee-1', 2));
-      preferences.push(new VideoPreference('attendee-2', 2));
-      policy.chooseRemoteVideoSources(preferences);
+      const preferences = VideoPreferences.prepare();
+      preferences.add(new VideoPreference('attendee-1', 2));
+      preferences.add(new VideoPreference('attendee-2', 2));
+      policy.chooseRemoteVideoSources(preferences.build());
       let resub = policy.wantsResubscribe();
       expect(resub).to.equal(true);
       let received = policy.chooseSubscriptions();
@@ -920,8 +921,8 @@ describe('VideoPriorityBasedPolicy', () => {
       policy.updateMetrics(metricReport);
       resub = policy.wantsResubscribe();
       expect(resub).to.equal(false);
-      preferences.push(new VideoPreference('attendee-3', 2));
-      policy.chooseRemoteVideoSources(preferences);
+      preferences.add(new VideoPreference('attendee-3', 2));
+      policy.chooseRemoteVideoSources(preferences.build());
       resub = policy.wantsResubscribe();
       expect(resub).to.equal(false);
       const tiles = tileController.getAllRemoteVideoTiles();
@@ -938,10 +939,10 @@ describe('VideoPriorityBasedPolicy', () => {
       expect(tileController.haveVideoTileForAttendeeId('attendee-3')).to.equal(true);
 
       incrementTime(3000);
-      preferences = [];
-      preferences.push(new VideoPreference('attendee-1', 2));
-      preferences.push(new VideoPreference('attendee-2', 2));
-      policy.chooseRemoteVideoSources(preferences);
+      preferences.clear();
+      preferences.add(new VideoPreference('attendee-1', 2));
+      preferences.add(new VideoPreference('attendee-2', 2));
+      policy.chooseRemoteVideoSources(preferences.build());
       resub = policy.wantsResubscribe();
       expect(resub).to.equal(false);
       expect(tileController.haveVideoTileForAttendeeId('attendee-3')).to.equal(false);
@@ -956,12 +957,12 @@ describe('VideoPriorityBasedPolicy', () => {
       metricReport.globalMetricReport = new GlobalMetricReport();
       metricReport.globalMetricReport.currentMetrics['googAvailableReceiveBandwidth'] =
         10000 * 1000;
-      const preferences: VideoPreference[] = [];
-      preferences.push(new VideoPreference('attendee-1', 1));
-      preferences.push(new VideoPreference('attendee-2', 1));
-      preferences.push(new VideoPreference('attendee-3', 1));
-      preferences.push(new VideoPreference('attendee-4', 1));
-      policy.chooseRemoteVideoSources(preferences);
+      const preferences = VideoPreferences.prepare();
+      preferences.add(new VideoPreference('attendee-1', 1));
+      preferences.add(new VideoPreference('attendee-2', 1));
+      preferences.add(new VideoPreference('attendee-3', 1));
+      preferences.add(new VideoPreference('attendee-4', 1));
+      policy.chooseRemoteVideoSources(preferences.build());
       let resub = policy.wantsResubscribe();
       expect(resub).to.equal(true);
       const received = policy.chooseSubscriptions();

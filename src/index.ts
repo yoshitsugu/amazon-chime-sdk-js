@@ -104,6 +104,7 @@ import DevicePixelRatioObserver from './devicepixelratioobserver/DevicePixelRati
 import DevicePixelRatioSource from './devicepixelratiosource/DevicePixelRatioSource';
 import DevicePixelRatioWindowSource from './devicepixelratiosource/DevicePixelRatioWindowSource';
 import DeviceSelection from './devicecontroller/DeviceSelection';
+import Eq from './videodownlinkbandwidthpolicy/Eq';
 import EventAttributes from './eventcontroller/EventAttributes';
 import EventController from './eventcontroller/EventController';
 import EventName from './eventcontroller/EventName';
@@ -164,6 +165,7 @@ import NotReadableError from './devicecontroller/NotReadableError';
 import OpenSignalingConnectionTask from './task/OpenSignalingConnectionTask';
 import OverconstrainedError from './devicecontroller/OverconstrainedError';
 import ParallelGroupTask from './task/ParallelGroupTask';
+import PartialOrd from './videodownlinkbandwidthpolicy/PartialOrd';
 import PermissionDeniedError from './devicecontroller/PermissionDeniedError';
 import PingPong from './pingpong/PingPong';
 import PingPongObserver from './pingpongobserver/PingPongObserver';
@@ -235,6 +237,7 @@ import VideoInputDevice from './devicecontroller/VideoInputDevice';
 import VideoLogEvent from './statscollector/VideoLogEvent';
 import VideoOnlyTransceiverController from './transceivercontroller/VideoOnlyTransceiverController';
 import VideoPreference from './videodownlinkbandwidthpolicy/VideoPreference';
+import VideoPreferences from './videodownlinkbandwidthpolicy/VideoPreferences';
 import VideoPriorityBasedPolicy from './videodownlinkbandwidthpolicy/VideoPriorityBasedPolicy';
 import VideoQualitySettings from './devicecontroller/VideoQualitySettings';
 import VideoSource from './videosource/VideoSource';
@@ -260,6 +263,7 @@ import VolumeIndicatorCallback from './realtimecontroller/VolumeIndicatorCallbac
 import WaitForAttendeePresenceTask from './task/WaitForAttendeePresenceTask';
 import WebSocketAdapter from './websocketadapter/WebSocketAdapter';
 import WebSocketReadyState from './websocketadapter/WebSocketReadyState';
+import { MutableVideoPreferences } from './videodownlinkbandwidthpolicy/VideoPreferences';
 import { isAudioTransformDevice } from './devicecontroller/AudioTransformDevice';
 import { isDestroyable } from './destroyable/Destroyable';
 import { isVideoTransformDevice } from './devicecontroller/VideoTransformDevice';
@@ -371,6 +375,7 @@ export {
   DevicePixelRatioSource,
   DevicePixelRatioWindowSource,
   DeviceSelection,
+  Eq,
   EventAttributes,
   EventController,
   EventName,
@@ -414,6 +419,7 @@ export {
   Modality,
   MonitorTask,
   MultiLogger,
+  MutableVideoPreferences,
   NScaleVideoUplinkBandwidthPolicy,
   NoOpAudioVideoController,
   NoOpDebugLogger,
@@ -431,6 +437,7 @@ export {
   OpenSignalingConnectionTask,
   OverconstrainedError,
   ParallelGroupTask,
+  PartialOrd,
   PermissionDeniedError,
   PingPong,
   PingPongObserver,
@@ -502,6 +509,7 @@ export {
   VideoLogEvent,
   VideoOnlyTransceiverController,
   VideoPreference,
+  VideoPreferences,
   VideoPriorityBasedPolicy,
   VideoQualitySettings,
   VideoSource,

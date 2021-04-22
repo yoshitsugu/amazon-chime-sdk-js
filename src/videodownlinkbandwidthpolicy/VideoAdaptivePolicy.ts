@@ -17,6 +17,7 @@ import TargetDisplaySize from './TargetDisplaySize';
 import VideoDownlinkBandwidthPolicy from './VideoDownlinkBandwidthPolicy';
 import VideoDownlinkObserver from './VideoDownlinkObserver';
 import VideoPreference from './VideoPreference';
+import { VideoPreferences } from './VideoPreferences';
 
 /** @internal */
 class LinkMediaStats {
@@ -62,8 +63,8 @@ export default class VideoAdaptivePolicy implements VideoDownlinkBandwidthPolicy
   private static readonly MAX_ALLOWED_PROBE_TIME_MS = 60000;
 
   protected tileController: VideoTileController | undefined;
-  protected videoPreferences: VideoPreference[] | undefined;
-  protected defaultVideoPreferences: VideoPreference[] | undefined;
+  protected videoPreferences: VideoPreferences | undefined;
+  protected defaultVideoPreferences: VideoPreferences | undefined;
   protected pauseTiles: boolean;
   protected videoIndex: VideoStreamIndex;
   protected videoPreferencesUpdated: boolean;
@@ -139,10 +140,11 @@ export default class VideoAdaptivePolicy implements VideoDownlinkBandwidthPolicy
       attendeeIds.add(stream.attendeeId);
     }
 
-    this.defaultVideoPreferences = [];
+    const prefs = VideoPreferences.prepare();
     for (const attendeeId of attendeeIds) {
-      this.defaultVideoPreferences.push(new VideoPreference(attendeeId, 1, TargetDisplaySize.High));
+      prefs.add(new VideoPreference(attendeeId, 1, TargetDisplaySize.High));
     }
+    this.defaultVideoPreferences = prefs.build();
   }
 
   updateMetrics(clientMetricReport: ClientMetricReport): void {
@@ -215,7 +217,7 @@ export default class VideoAdaptivePolicy implements VideoDownlinkBandwidthPolicy
   protected calculateOptimalReceiveStreams(): void {
     const chosenStreams: VideoStreamDescription[] = [];
     const remoteInfos: VideoStreamDescription[] = this.videoIndex.remoteStreamDescriptions();
-    if (remoteInfos.length === 0 || (this.videoPreferences && this.videoPreferences.length === 0)) {
+    if (remoteInfos.length === 0 || this.videoPreferences?.isEmpty()) {
       this.optimalReceiveStreams = [];
       return;
     }
@@ -645,7 +647,7 @@ export default class VideoAdaptivePolicy implements VideoDownlinkBandwidthPolicy
       return;
     }
     this.pausedBwAttendeeIds = new Set<string>();
-    if (this.videoPreferences !== undefined && this.pauseTiles) {
+    if (this.videoPreferences && this.pauseTiles) {
       const videoTiles = this.tileController.getAllVideoTiles();
       for (const preference of this.videoPreferences) {
         const videoTile = this.getVideoTileForAttendeeId(
@@ -712,9 +714,7 @@ export default class VideoAdaptivePolicy implements VideoDownlinkBandwidthPolicy
           );
         } else if (
           this.videoPreferences !== undefined &&
-          this.videoPreferences.findIndex(
-            preference => preference.attendeeId === state.boundAttendeeId
-          ) === -1
+          !this.videoPreferences.some(pref => pref.attendeeId === state.boundAttendeeId)
         ) {
           this.tileController.removeVideoTile(state.tileId);
         }
@@ -728,16 +728,13 @@ export default class VideoAdaptivePolicy implements VideoDownlinkBandwidthPolicy
     chosenStreams: VideoStreamDescription[]
   ): VideoStreamDescription {
     let upgradeStream: VideoStreamDescription;
-    const videoPreferences =
-      this.videoPreferences === undefined ? this.defaultVideoPreferences : this.videoPreferences;
-    // sort preferences by priority ascending
-    videoPreferences.sort((a, b) => {
-      return a.priority - b.priority;
-    });
+    const videoPreferences: VideoPreferences =
+      this.videoPreferences || this.defaultVideoPreferences;
 
-    const highestPriority = videoPreferences[0].priority;
+    const highestPriority = videoPreferences.highestPriority();
     let nextPriority;
     let priority = highestPriority;
+
     while (priority !== -1) {
       nextPriority = -1;
       for (const preference of videoPreferences) {

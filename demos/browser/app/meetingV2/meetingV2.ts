@@ -2500,7 +2500,7 @@ export class DemoMeetingApp
   }
 
   updateDownlinkPreference(): void {
-    let videoPreferences: VideoPreference[] = [];
+    const videoPreferences: MutableVideoPreferences = VideoPreferences.prepare();
     for (const attendeeId in this.roster) {
       if (this.roster[attendeeId].hasVideo) {
         if (this.roster[attendeeId].pinned) {

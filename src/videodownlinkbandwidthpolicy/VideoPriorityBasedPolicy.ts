@@ -7,12 +7,12 @@ import VideoStreamIdSet from '../videostreamidset/VideoStreamIdSet';
 import VideoStreamIndex from '../videostreamindex/VideoStreamIndex';
 import VideoAdaptivePolicy from './VideoAdaptivePolicy';
 import VideoDownlinkObserver from './VideoDownlinkObserver';
-import VideoPreference from './VideoPreference';
+import { VideoPreferences } from './VideoPreferences';
 
 export default class VideoPriorityBasedPolicy extends VideoAdaptivePolicy {
   constructor(protected logger: Logger) {
     super(logger);
-    this.videoPreferences = [];
+    this.videoPreferences = VideoPreferences.default();
     this.pauseTiles = true;
   }
 
@@ -48,8 +48,8 @@ export default class VideoPriorityBasedPolicy extends VideoAdaptivePolicy {
     super.removeObserver(observer);
   }
 
-  chooseRemoteVideoSources(preferences: VideoPreference[]): void {
-    if (this.arePreferencesIdentical(preferences)) {
+  chooseRemoteVideoSources(preferences: VideoPreferences): void {
+    if (this.videoPreferences.equals(preferences)) {
       return;
     }
     this.videoPreferences = preferences;
@@ -63,25 +63,5 @@ export default class VideoPriorityBasedPolicy extends VideoAdaptivePolicy {
         observer.shouldResubscribeRemoteVideos();
       });
     }
-  }
-
-  private arePreferencesIdentical(preferences: VideoPreference[]): boolean {
-    if (preferences.length !== this.videoPreferences.length) {
-      return false;
-    }
-
-    for (const preference of preferences) {
-      if (
-        !this.videoPreferences.some(
-          videoPreference =>
-            videoPreference.attendeeId === preference.attendeeId &&
-            videoPreference.priority === preference.priority &&
-            videoPreference.targetSize === preference.targetSize
-        )
-      ) {
-        return false;
-      }
-    }
-    return true;
   }
 }
