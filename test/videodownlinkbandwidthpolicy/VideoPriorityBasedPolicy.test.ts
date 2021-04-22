@@ -4,7 +4,6 @@
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 
-import VideoDownlinkObserver from '../../src/videodownlinkbandwidthpolicy/VideoDownlinkObserver'
 import AudioVideoTileController from '../../src/audiovideocontroller/AudioVideoController';
 import NoOpAudioVideoTileController from '../../src/audiovideocontroller/NoOpAudioVideoController';
 import ClientMetricReportDirection from '../../src/clientmetricreport/ClientMetricReportDirection';
@@ -20,6 +19,7 @@ import {
   SdkStreamMediaType,
 } from '../../src/signalingprotocol/SignalingProtocol';
 import TargetDisplaySize from '../../src/videodownlinkbandwidthpolicy/TargetDisplaySize';
+import VideoDownlinkObserver from '../../src/videodownlinkbandwidthpolicy/VideoDownlinkObserver';
 import VideoPreference from '../../src/videodownlinkbandwidthpolicy/VideoPreference';
 import VideoPriorityBasedPolicy from '../../src/videodownlinkbandwidthpolicy/VideoPriorityBasedPolicy';
 import SimulcastVideoStreamIndex from '../../src/videostreamindex/SimulcastVideoStreamIndex';

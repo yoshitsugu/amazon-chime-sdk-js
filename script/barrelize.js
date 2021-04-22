@@ -34,6 +34,9 @@ const ignoredTypes = [
   'SignalingProtocol',
   'index',
   'ScreenSignalingProtocol',
+
+  // We do not want to expose this @internal class shared by policies
+  'VideoAdaptivePolicy',
 ];
 
 walk('src')

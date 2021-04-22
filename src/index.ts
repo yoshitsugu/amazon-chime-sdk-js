@@ -222,7 +222,6 @@ import TransceiverController from './transceivercontroller/TransceiverController
 import TypeError from './devicecontroller/TypeError';
 import UnusableAudioWarningConnectionHealthPolicy from './connectionhealthpolicy/UnusableAudioWarningConnectionHealthPolicy';
 import Versioning from './versioning/Versioning';
-import VideoAdaptivePolicy from './videodownlinkbandwidthpolicy/VideoAdaptivePolicy';
 import VideoAdaptiveProbePolicy from './videodownlinkbandwidthpolicy/VideoAdaptiveProbePolicy';
 import VideoCaptureAndEncodeParameter from './videocaptureandencodeparameter/VideoCaptureAndEncodeParameter';
 import VideoDownlinkBandwidthPolicy from './videodownlinkbandwidthpolicy/VideoDownlinkBandwidthPolicy';
@@ -490,7 +489,6 @@ export {
   TypeError,
   UnusableAudioWarningConnectionHealthPolicy,
   Versioning,
-  VideoAdaptivePolicy,
   VideoAdaptiveProbePolicy,
   VideoCaptureAndEncodeParameter,
   VideoDownlinkBandwidthPolicy,
