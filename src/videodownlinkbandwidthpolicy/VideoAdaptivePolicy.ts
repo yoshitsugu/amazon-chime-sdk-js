@@ -5,6 +5,7 @@ import Direction from '../clientmetricreport/ClientMetricReportDirection';
 import ClientMetricReport from '../clientmetricreport/DefaultClientMetricReport';
 import ContentShareConstants from '../contentsharecontroller/ContentShareConstants';
 import Logger from '../logger/Logger';
+import { LogLevel } from '../logger/LogLevel';
 import DefaultVideoStreamIdSet from '../videostreamidset/DefaultVideoStreamIdSet';
 import VideoStreamIdSet from '../videostreamidset/VideoStreamIdSet';
 import VideoStreamDescription from '../videostreamindex/VideoStreamDescription';
@@ -153,36 +154,25 @@ export default class VideoAdaptivePolicy implements VideoDownlinkBandwidthPolicy
     const metricReport = clientMetricReport.getObservableMetrics();
     this.downlinkStats.bandwidthEstimateKbps = metricReport.availableReceiveBandwidth / 1000;
     for (const ssrcStr in clientMetricReport.streamMetricReports) {
-      const ssrc = Number(ssrcStr);
-      if (clientMetricReport.streamMetricReports[ssrc].direction === Direction.DOWNSTREAM) {
+      const ssrc = Number.parseInt(ssrcStr, 10);
+      const metrics = clientMetricReport.streamMetricReports[ssrc];
+      if (metrics.direction === Direction.DOWNSTREAM) {
         // Only use video stream metrics
         if (
-          clientMetricReport.streamMetricReports[ssrc].currentMetrics.hasOwnProperty(
-            'googNacksSent'
-          ) &&
-          clientMetricReport.streamMetricReports[ssrc].currentMetrics.hasOwnProperty(
-            'googFrameRateReceived'
-          )
+          metrics.currentMetrics.hasOwnProperty('googNacksSent') &&
+          metrics.currentMetrics.hasOwnProperty('googFrameRateReceived')
         ) {
           this.downlinkStats.nackCount += clientMetricReport.countPerSecond('googNacksSent', ssrc);
         }
 
         if (
-          clientMetricReport.streamMetricReports[ssrc].currentMetrics.hasOwnProperty(
-            'packetsLost'
-          ) &&
-          clientMetricReport.streamMetricReports[ssrc].currentMetrics.hasOwnProperty(
-            'googFrameRateReceived'
-          )
+          metrics.currentMetrics.hasOwnProperty('packetsLost') &&
+          metrics.currentMetrics.hasOwnProperty('googFrameRateReceived')
         ) {
           this.downlinkStats.packetsLost += clientMetricReport.countPerSecond('packetsLost', ssrc);
         }
 
-        if (
-          clientMetricReport.streamMetricReports[ssrc].currentMetrics.hasOwnProperty(
-            'bytesReceived'
-          )
-        ) {
+        if (metrics.currentMetrics.hasOwnProperty('bytesReceived')) {
           this.downlinkStats.usedBandwidthKbps +=
             clientMetricReport.bitsPerSecond('bytesReceived', ssrc) / 1000;
         }
@@ -314,14 +304,14 @@ export default class VideoAdaptivePolicy implements VideoDownlinkBandwidthPolicy
     const lastNumberPaused = this.pausedBwAttendeeIds.size;
     this.processBwPausedStreams(remoteInfos, chosenStreams);
 
-    const decisionLogStr = this.policyStateLogStr(remoteInfos, rates.targetDownlinkBitrate);
     if (
-      this.logCount % 15 === 0 ||
-      this.rateProbeState !== lastProbeState ||
-      this.optimalReceiveStreams.length !== chosenStreams.length ||
-      lastNumberPaused !== this.pausedBwAttendeeIds.size
+      this.logger.getLogLevel() <= LogLevel.INFO &&
+      (this.logCount % 15 === 0 ||
+        this.rateProbeState !== lastProbeState ||
+        this.optimalReceiveStreams.length !== chosenStreams.length ||
+        lastNumberPaused !== this.pausedBwAttendeeIds.size)
     ) {
-      this.logger.info(decisionLogStr);
+      this.logger.info(this.policyStateLogStr(remoteInfos, rates.targetDownlinkBitrate));
       this.logCount = 0;
     }
     this.logCount++;
@@ -487,10 +477,7 @@ export default class VideoAdaptivePolicy implements VideoDownlinkBandwidthPolicy
       if (chosenStreams[i].groupId === upgradeStream.groupId) {
         const diffRate = upgradeStream.avgBitrateKbps - chosenStreams[i].avgBitrateKbps;
         this.logger.info(
-          'bwe: upgradeStream from ' +
-            JSON.stringify(chosenStreams[i]) +
-            ' to ' +
-            JSON.stringify(upgradeStream)
+          'bwe: upgradeStream from ' + JSON.stringify(chosenStreams[i]) + ' to ' + upgradeStream
         );
         this.lastUpgradeRateKbps = diffRate;
         chosenStreams[i] = upgradeStream;
@@ -687,7 +674,7 @@ export default class VideoAdaptivePolicy implements VideoDownlinkBandwidthPolicy
           } else if (
             remoteInfos.findIndex(stream => stream.attendeeId === preference.attendeeId) !== -1
           ) {
-            // Create a tile for this participant if one doesn't already exist and mark it as paused by bandwidth
+            // Create a tile for this participant if one doesn't already exist and mark it as paused
             // Don't include it in the chosen streams because we don't want to subscribe for it then have to pause it.
             const newTile = this.tileController.addVideoTile();
             newTile.pause();
@@ -905,10 +892,7 @@ export default class VideoAdaptivePolicy implements VideoDownlinkBandwidthPolicy
       return false;
     }
     for (const lastStream of this.optimalNonPausedReceiveStreams) {
-      if (
-        chosenStreams.findIndex(chosenStream => chosenStream.streamId === lastStream.streamId) ===
-        -1
-      ) {
+      if (!chosenStreams.some(stream => stream.streamId === lastStream.streamId)) {
         return false;
       }
     }

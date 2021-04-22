@@ -4,7 +4,7 @@
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 
-import { VideoDownlinkObserver } from '../../src';
+import VideoDownlinkObserver from '../../src/videodownlinkbandwidthpolicy/VideoDownlinkObserver'
 import AudioVideoTileController from '../../src/audiovideocontroller/AudioVideoController';
 import NoOpAudioVideoTileController from '../../src/audiovideocontroller/NoOpAudioVideoController';
 import ClientMetricReportDirection from '../../src/clientmetricreport/ClientMetricReportDirection';

@@ -49,42 +49,39 @@ export default class VideoPriorityBasedPolicy extends VideoAdaptivePolicy {
   }
 
   chooseRemoteVideoSources(preferences: VideoPreference[]): void {
-    if (this.arePreferencesDifferent(preferences)) {
-      this.videoPreferences = preferences;
-      this.videoPreferencesUpdated = true;
-      this.logger.info(
-        `bwe: chooseRemoteVideoSources bwe: new preferences: ${JSON.stringify(
-          this.videoPreferences
-        )}`
-      );
-      if (this.wantsResubscribe()) {
-        this.logger.info(`bwe: videoPriorityBasedPolicy wants a resubscribe`);
-        this.forEachObserver(observer => {
-          observer.shouldResubscribeRemoteVideos();
-        });
-      }
-    } else {
+    if (this.arePreferencesIdentical(preferences)) {
       return;
+    }
+    this.videoPreferences = preferences;
+    this.videoPreferencesUpdated = true;
+    this.logger.info(
+      `bwe: chooseRemoteVideoSources bwe: new preferences: ${JSON.stringify(this.videoPreferences)}`
+    );
+    if (this.wantsResubscribe()) {
+      this.logger.info(`bwe: videoPriorityBasedPolicy wants a resubscribe`);
+      this.forEachObserver(observer => {
+        observer.shouldResubscribeRemoteVideos();
+      });
     }
   }
 
-  private arePreferencesDifferent(preferences: VideoPreference[]): boolean {
+  private arePreferencesIdentical(preferences: VideoPreference[]): boolean {
     if (preferences.length !== this.videoPreferences.length) {
-      return true;
+      return false;
     }
 
     for (const preference of preferences) {
       if (
-        this.videoPreferences.findIndex(
+        !this.videoPreferences.some(
           videoPreference =>
             videoPreference.attendeeId === preference.attendeeId &&
             videoPreference.priority === preference.priority &&
             videoPreference.targetSize === preference.targetSize
-        ) === -1
+        )
       ) {
-        return true;
+        return false;
       }
     }
-    return false;
+    return true;
   }
 }

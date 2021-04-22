@@ -26,7 +26,7 @@ export default class VideoAdaptiveProbePolicy extends VideoAdaptivePolicy {
     const remoteInfos: VideoStreamDescription[] = videoIndex.remoteStreamDescriptions();
     // If there is active content then set that as high priority, and the rest at lower
     for (const info of remoteInfos) {
-      if (preferences.findIndex(preference => preference.attendeeId === info.attendeeId) === -1) {
+      if (!preferences.some(preference => preference.attendeeId === info.attendeeId)) {
         // For now always subscribe to content even if higher bandwidth then target
         if (info.attendeeId.endsWith(ContentShareConstants.Modality)) {
           preferences.push(new VideoPreference(info.attendeeId, 1));

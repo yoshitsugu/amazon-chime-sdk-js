@@ -5,23 +5,17 @@ import TargetDisplaySize from './TargetDisplaySize';
 
 export default class VideoPreference {
   /**
-   * The attendee ID this preference relates to.
-   */
-  attendeeId: string;
-
-  /**
-   * The relative priority of this attendee against others.
-   */
-  priority: number;
-
-  /**
    * The desired maximum simulcast layers to receive.
    */
   targetSize: TargetDisplaySize;
 
-  constructor(attendeeId: string, priority: number, targetSize?: TargetDisplaySize) {
-    this.attendeeId = attendeeId;
-    this.priority = priority;
+  /** Initializes a [[VideoPreference]] with the given properties.
+   *
+   * @param attendeeId Attendee ID of the client
+   * @param priority The relative priority of this attendee against others.
+   * @param targetSize The desired maximum simulcast layers to receive.
+   */
+  constructor(public attendeeId: string, public priority: number, targetSize?: TargetDisplaySize) {
     this.targetSize = targetSize !== undefined ? targetSize : TargetDisplaySize.High;
   }
 
