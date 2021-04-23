@@ -18,6 +18,7 @@ import VideoDownlinkBandwidthPolicy from './VideoDownlinkBandwidthPolicy';
 import VideoDownlinkObserver from './VideoDownlinkObserver';
 import VideoPreference from './VideoPreference';
 import { VideoPreferences } from './VideoPreferences';
+import VideoDownlinkPolicyAdaptionSpeed from './VideoDownlinkPolicyAdaptionSpeed';
 
 /** @internal */
 class LinkMediaStats {
@@ -56,7 +57,10 @@ export default class VideoPriorityBasedPolicy implements VideoDownlinkBandwidthP
   private static readonly LARGE_RATE_CHANGE_TRIGGER_PERCENT = 20;
   private static readonly TARGET_RATE_CHANGE_TRIGGER_PERCENT = 15;
   private static readonly LOW_BITRATE_THRESHOLD_KBPS = 300;
-  private static readonly MIN_TIME_BETWEEN_PROBE_MS = 5000;
+  private static readonly DEFAULT_MIN_TIME_BETWEEN_PROBE_MS = 5000;
+  private static readonly SLOWER_MIN_TIME_BETWEEN_PROBE_MS = 15000;
+  private static readonly DEFAULT_DOWNGRADE_DELAY_MS = 0;
+  private static readonly SLOWER_DOWNGRADE_DELAY_MS = 3000;
   private static readonly MIN_TIME_BETWEEN_SUBSCRIBE_MS = 2000;
   private static readonly MAX_HOLD_BEFORE_PROBE_MS = 60000;
   private static readonly MAX_ALLOWED_PROBE_TIME_MS = 60000;
@@ -92,6 +96,9 @@ export default class VideoPriorityBasedPolicy implements VideoDownlinkBandwidthP
   private probePendingStartTimestamp: number;
   private timeBeforeAllowProbeMs: number;
   private lastProbeTimestamp: number;
+  private downgradeDelayMs: number;
+  private downgradeRequestedStartTimestamp: number | null = null;
+  private adaptationSpeed: VideoDownlinkPolicyAdaptionSpeed;
 
   constructor(protected logger: Logger) {
     this.reset();
@@ -117,13 +124,31 @@ export default class VideoPriorityBasedPolicy implements VideoDownlinkBandwidthP
     this.lastUpgradeRateKbps = 0;
     this.timeBeforeAllowSubscribeMs = VideoPriorityBasedPolicy.MIN_TIME_BETWEEN_SUBSCRIBE_MS;
     this.lastProbeTimestamp = Date.now();
-    this.timeBeforeAllowProbeMs = VideoPriorityBasedPolicy.MIN_TIME_BETWEEN_PROBE_MS;
     this.downlinkStats = new LinkMediaStats();
     this.prevDownlinkStats = new LinkMediaStats();
+    this.downgradeRequestedStartTimestamp = null;
+    // Don't reset adaptationSpeed
+    this.resetAdaptationSpeedConstants();
   }
 
   bindToTileController(tileController: VideoTileController): void {
     this.tileController = tileController;
+  }
+
+  setDownlinkPolicyAdaptationSpeed(adaptationSpeed: VideoDownlinkPolicyAdaptionSpeed): void {
+    this.adaptationSpeed = adaptationSpeed;
+    this.resetAdaptationSpeedConstants();
+  }
+
+  private resetAdaptationSpeedConstants(): void {
+    if (this.adaptationSpeed === VideoDownlinkPolicyAdaptionSpeed.Slower) {
+      this.timeBeforeAllowProbeMs = VideoPriorityBasedPolicy.SLOWER_MIN_TIME_BETWEEN_PROBE_MS;
+      this.downgradeDelayMs = VideoPriorityBasedPolicy.SLOWER_DOWNGRADE_DELAY_MS;
+    } else {
+      // Default
+      this.timeBeforeAllowProbeMs = VideoPriorityBasedPolicy.DEFAULT_MIN_TIME_BETWEEN_PROBE_MS;
+      this.downgradeDelayMs = VideoPriorityBasedPolicy.DEFAULT_DOWNGRADE_DELAY_MS;
+    }
   }
 
   // This function allows setting preferences without the need to inherit from this class
@@ -432,8 +457,22 @@ export default class VideoPriorityBasedPolicy implements VideoDownlinkBandwidthP
       });
       this.usingPrevTargetRate = true;
       targetBitrate = this.prevTargetRateKbps;
+    } else if (
+      this.downgradeDelayMs > 0 &&
+      (!this.downgradeRequestedStartTimestamp ||
+        now - this.downgradeRequestedStartTimestamp < this.downgradeDelayMs)
+    ) {
+      if (!this.downgradeRequestedStartTimestamp) {
+        this.downgradeRequestedStartTimestamp = now;
+      }
+      this.logger.info(
+        `bwe: Ignoring downgrade request due to adaption speed setting, using previous rate ${this.prevTargetRateKbps}kbps`
+      );
+      this.usingPrevTargetRate = true;
+      targetBitrate = this.prevTargetRateKbps;
     } else {
       this.usingPrevTargetRate = false;
+      this.downgradeRequestedStartTimestamp = null;
     }
 
     return targetBitrate;
@@ -453,7 +492,7 @@ export default class VideoPriorityBasedPolicy implements VideoDownlinkBandwidthP
       case RateProbeState.ProbePending:
         if (
           this.lastProbeTimestamp === 0 ||
-          now - this.lastProbeTimestamp > VideoPriorityBasedPolicy.MIN_TIME_BETWEEN_PROBE_MS
+          now - this.lastProbeTimestamp > VideoPriorityBasedPolicy.DEFAULT_MIN_TIME_BETWEEN_PROBE_MS
         ) {
           this.probePendingStartTimestamp = now;
         } else {
@@ -539,7 +578,7 @@ export default class VideoPriorityBasedPolicy implements VideoDownlinkBandwidthP
         // If target bitrate can sustain probe rate, then probe was successful.
         this.setProbeState(RateProbeState.NotProbing);
         // Reset the time allowed between probes since this was successful
-        this.timeBeforeAllowProbeMs = VideoPriorityBasedPolicy.MIN_TIME_BETWEEN_PROBE_MS;
+        this.timeBeforeAllowProbeMs = VideoPriorityBasedPolicy.DEFAULT_MIN_TIME_BETWEEN_PROBE_MS;
         return UseReceiveSet.NewOptimal;
       }
     }

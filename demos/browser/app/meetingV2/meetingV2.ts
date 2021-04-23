@@ -24,6 +24,7 @@ import {
   DefaultVideoTransformDevice,
   Device,
   DeviceChangeObserver,
+  VideoDownlinkPolicyAdaptionSpeed,
   EventAttributes,
   EventName,
   Logger,
@@ -1253,6 +1254,7 @@ export class DemoMeetingApp
     );
     if (this.usePriorityBasedDownlinkPolicy) {
       this.priorityBasedDownlinkPolicy = new VideoPriorityBasedPolicy(this.meetingLogger);
+      this.priorityBasedDownlinkPolicy.setDownlinkPolicyAdaptationSpeed(VideoDownlinkPolicyAdaptionSpeed.Slower);
       configuration.videoDownlinkBandwidthPolicy = this.priorityBasedDownlinkPolicy;
     }
     

@@ -226,6 +226,7 @@ import VideoAdaptiveProbePolicy from './videodownlinkbandwidthpolicy/VideoAdapti
 import VideoCaptureAndEncodeParameter from './videocaptureandencodeparameter/VideoCaptureAndEncodeParameter';
 import VideoDownlinkBandwidthPolicy from './videodownlinkbandwidthpolicy/VideoDownlinkBandwidthPolicy';
 import VideoDownlinkObserver from './videodownlinkbandwidthpolicy/VideoDownlinkObserver';
+import VideoDownlinkPolicyAdaptionSpeed from './videodownlinkbandwidthpolicy/VideoDownlinkPolicyAdaptionSpeed';
 import VideoElementFactory from './videoelementfactory/VideoElementFactory';
 import VideoFrameBuffer from './videoframeprocessor/VideoFrameBuffer';
 import VideoFrameProcessor from './videoframeprocessor/VideoFrameProcessor';
@@ -496,6 +497,7 @@ export {
   VideoCaptureAndEncodeParameter,
   VideoDownlinkBandwidthPolicy,
   VideoDownlinkObserver,
+  VideoDownlinkPolicyAdaptionSpeed,
   VideoElementFactory,
   VideoFrameBuffer,
   VideoFrameProcessor,
