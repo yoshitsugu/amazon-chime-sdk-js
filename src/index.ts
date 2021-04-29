@@ -209,6 +209,7 @@ import SimulcastUplinkPolicy from './videouplinkbandwidthpolicy/SimulcastUplinkP
 import SimulcastVideoStreamIndex from './videostreamindex/SimulcastVideoStreamIndex';
 import SingleNodeAudioTransformDevice from './devicecontroller/SingleNodeAudioTransformDevice';
 import Some from './maybe/Some';
+import StaticVideoUplinkBandwidthPolicy from './videouplinkbandwidthpolicy/StaticVideoUplinkBandwidthPolicy';
 import StatsCollector from './statscollector/StatsCollector';
 import StreamMetricReport from './clientmetricreport/StreamMetricReport';
 import SubscribeAndReceiveSubscribeAckTask from './task/SubscribeAndReceiveSubscribeAckTask';
@@ -472,6 +473,7 @@ export {
   SimulcastVideoStreamIndex,
   SingleNodeAudioTransformDevice,
   Some,
+  StaticVideoUplinkBandwidthPolicy,
   StatsCollector,
   StreamMetricReport,
   SubscribeAndReceiveSubscribeAckTask,
