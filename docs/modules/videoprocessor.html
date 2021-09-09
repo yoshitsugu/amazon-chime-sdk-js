@@ -230,25 +230,54 @@
   <span class="hljs-keyword">return</span> buffers;
 }
 </code></pre>
-					<a href="#video-processing-usage" id="video-processing-usage" style="color: inherit; text-decoration: none;">
-						<h2>Video Processing Usage</h2>
-					</a>
-					<a href="#custom-processor-usage-during-meeting" id="custom-processor-usage-during-meeting" style="color: inherit; text-decoration: none;">
-						<h3>Custom processor usage during meeting</h3>
-					</a>
-					<pre><code class="language-typescript"><span class="hljs-keyword">import</span> {
+					<p>More example about building a customized processor to load an external image:</p>
+					<pre><code class="language-typescript">class VideoLoadImageProcessor implements VideoFrameProcessor {
+  private targetCanvas: HTMLCanvasElement = document.createElement(&#x27;canvas&#x27;) as HTMLCanvasElement;
+  private targetCanvasCtx: CanvasRenderingContext2D = this.targetCanvas.getContext(&#x27;2d&#x27;) as CanvasRenderingContext2D;
+  private canvasVideoFrameBuffer = new CanvasVideoFrameBuffer(this.targetCanvas);
+
+  private renderWidth: number = 0;
+  private renderHeight: number = 0;
+  private sourceWidth: number = 0;
+  private sourceHeight: number = 0;
+
+  async function loadImage(url: string, elem: HTMLImageElement): Promise&lt;HTMLImageElement&gt; {
+    return new Promise((resolve, reject) =&gt; {
+      elem.onload = (): void =&gt; resolve(elem);
+      elem.onerror = reject;
+      elem.src = url;
+      // to configure CORS access for the fetch of the new image if it is not hosted on the same server
+      elem.crossOrigin = &quot;anonymous&quot;;
+    });
+  }
+  async process(buffers: VideoFrameBuffer[]): Promise&lt;VideoFrameBuffer[]&gt; {
+    const canvas = buffers[0].asCanvasElement();
+  // copy the frame to the intermediate canvas
+  this.targetCanvasCtx.drawImage(canvas, 0, 0));
+
+  // replace the video frame with the external image one for subsequent processor
+  buffers[0] = this.canvasVideoFrameBuffer;
+  return buffers;
+  }
+}
+
+## Video Processing Usage
+### Custom processor usage during meeting
+
+```typescript
+import {
   DefaultVideoTransformDevice
-} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;amazon-chime-sdk-js&#x27;</span>;
+} from &#x27;amazon-chime-sdk-js&#x27;;
 
-<span class="hljs-keyword">const</span> stages = [<span class="hljs-keyword">new</span> VideoResizeProcessor(<span class="hljs-number">4</span>/<span class="hljs-number">3</span>)]; <span class="hljs-comment">// constructs  processor</span>
+const stages = [new VideoResizeProcessor(4/3)]; // constructs  processor
 
-<span class="hljs-keyword">const</span> transformDevice = <span class="hljs-keyword">new</span> DefaultVideoTransformDevice(
+const transformDevice = new DefaultVideoTransformDevice(
   logger,
-  <span class="hljs-string">&#x27;foobar&#x27;</span>, <span class="hljs-comment">// device id string</span>
+  &#x27;foobar&#x27;, // device id string
   stages
 );
 
-<span class="hljs-keyword">await</span> meetingSession.audioVideo.chooseVideoInputDevice(transformDevice);
+await meetingSession.audioVideo.chooseVideoInputDevice(transformDevice);
 meetingSession.audioVideo.startLocalVideo();
 </code></pre>
 					<a href="#custom-processor-usage-during-meeting-preview" id="custom-processor-usage-during-meeting-preview" style="color: inherit; text-decoration: none;">

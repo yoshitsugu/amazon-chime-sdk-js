@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add retry logic in FAQs.
 - The Amazon Voice Focus support check, `VoiceFocusDeviceTransformer.isSupported`, now warns to the logger when run in an iframe, and can be configured to fail in that case.
 - Add documentation in Video Processing APIs on how to add filters in the preview window.
+- Add documentation in video processor on how to add a customized professor with new image loading.
 
 ### Changed
 
