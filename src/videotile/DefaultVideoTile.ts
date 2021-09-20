@@ -271,6 +271,11 @@ export default class DefaultVideoTile implements DevicePixelRatioObserver, Video
   }
 
   private removeAllBoundVideoElements(): void {
+
+    this.tileState.boundVideoElements.forEach((videoElement: VideoElement) => {
+      DefaultVideoTile.disconnectVideoStreamFromVideoElement(videoElement.boundVideoElement,false);
+    });
+
     this.tileState.boundVideoElements = [];
     this.tileState.boundVideoElement = null;
     this.tileState.videoElementCSSWidthPixels = null;
@@ -349,32 +354,38 @@ export default class DefaultVideoTile implements DevicePixelRatioObserver, Video
   }
 
   private updateVideoElementPhysicalPixels(): void {
-    if (
-      typeof this.tileState.videoElementCSSWidthPixels === 'number' &&
-      typeof this.tileState.videoElementCSSHeightPixels === 'number'
-    ) {
-      this.tileState.videoElementPhysicalWidthPixels =
-        this.tileState.devicePixelRatio * this.tileState.videoElementCSSWidthPixels;
-      this.tileState.videoElementPhysicalHeightPixels =
-        this.tileState.devicePixelRatio * this.tileState.videoElementCSSHeightPixels;
-    } else {
-      this.tileState.videoElementPhysicalWidthPixels = null;
-      this.tileState.videoElementPhysicalHeightPixels = null;
-    }
+    this.tileState.boundVideoElements.forEach((videoElement: VideoElement) => {
+      if (
+        typeof videoElement.videoElementCSSWidthPixels === 'number' &&
+        typeof videoElement.videoElementCSSHeightPixels === 'number'
+      ) {
+        videoElement.videoElementPhysicalWidthPixels =
+          this.tileState.devicePixelRatio * videoElement.videoElementCSSWidthPixels;
+          videoElement.videoElementPhysicalHeightPixels =
+          this.tileState.devicePixelRatio * videoElement.videoElementCSSHeightPixels;
+      } else {
+        videoElement.videoElementPhysicalWidthPixels = null;
+        videoElement.videoElementPhysicalHeightPixels = null;
+      }
+    })
   }
 
   private updateVideoStreamOnVideoElement(): void {
     if (this.tileState.active) {
-      DefaultVideoTile.connectVideoStreamToVideoElement(
-        this.tileState.boundVideoStream,
-        this.tileState.boundVideoElement,
-        this.tileState.localTile
-      );
+      this.tileState.boundVideoElements.forEach((videoElement: VideoElement) => {
+        DefaultVideoTile.connectVideoStreamToVideoElement(
+          this.tileState.boundVideoStream,
+          videoElement.boundVideoElement,
+          this.tileState.localTile
+        );
+      });
     } else {
-      DefaultVideoTile.disconnectVideoStreamFromVideoElement(
-        this.tileState.boundVideoElement,
-        this.tileState.paused
-      );
+      this.tileState.boundVideoElements.forEach((videoElement: VideoElement) => {
+        DefaultVideoTile.disconnectVideoStreamFromVideoElement(
+          videoElement.boundVideoElement,
+          this.tileState.paused
+        );
+      });
     }
   }
 
