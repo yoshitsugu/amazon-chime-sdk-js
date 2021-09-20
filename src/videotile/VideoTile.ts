@@ -44,7 +44,7 @@ export default interface VideoTile {
    * for example, when changing its dimensions or hiding it. To unbind
    * the video element from the tile pass null.
    */
-  bindVideoElement(videoElement: HTMLVideoElement | null): void;
+  bindVideoElement(videoElement: HTMLVideoElement | HTMLVideoElement[] | null): void;
 
   /**
    * Pauses the tile if it is not paused. When paused, the tile moves to an inactive state.

@@ -7,6 +7,7 @@ import DevicePixelRatioObserver from '../devicepixelratioobserver/DevicePixelRat
 import DefaultModality from '../modality/DefaultModality';
 import AsyncScheduler from '../scheduler/AsyncScheduler';
 import VideoTileController from '../videotilecontroller/VideoTileController';
+import VideoElement from './VideoElement';
 import VideoTile from './VideoTile';
 import VideoTileState from './VideoTileState';
 
@@ -118,6 +119,7 @@ export default class DefaultVideoTile implements DevicePixelRatioObserver, Video
   ) {
     this.tileState.tileId = tileId;
     this.tileState.localTile = localTile;
+    this.tileState.boundVideoElements = [];
     this.devicePixelRatioMonitor.registerObserver(this);
   }
 
@@ -198,28 +200,83 @@ export default class DefaultVideoTile implements DevicePixelRatioObserver, Video
     }
   }
 
-  bindVideoElement(videoElement: HTMLVideoElement | null): void {
+  bindVideoElement(videoElements: HTMLVideoElement | HTMLVideoElement[] | null): void {
     let tileUpdated = false;
-    if (this.tileState.boundVideoElement !== videoElement) {
-      this.tileState.boundVideoElement = videoElement;
+
+    if (videoElements == null) {
+      this.removeAllBoundVideoElements();
       tileUpdated = true;
-    }
-    if (this.tileState.boundVideoElement !== null) {
-      if (this.tileState.videoElementCSSWidthPixels !== videoElement.clientWidth) {
-        this.tileState.videoElementCSSWidthPixels = videoElement.clientWidth;
-        tileUpdated = true;
-      }
-      if (this.tileState.videoElementCSSHeightPixels !== videoElement.clientHeight) {
-        this.tileState.videoElementCSSHeightPixels = videoElement.clientHeight;
-        tileUpdated = true;
-      }
+    } else if (Array.isArray(videoElements)) {
+      videoElements.forEach((videoElement) => {
+        if(this.bindVideoElementToTile(videoElement)){
+          tileUpdated = true;
+        }
+      })
     } else {
-      this.tileState.videoElementCSSWidthPixels = null;
-      this.tileState.videoElementCSSHeightPixels = null;
+      tileUpdated = this.bindVideoElementToTile(videoElements);
     }
     if (tileUpdated) {
+      this.updateBoundVideoElement();
       this.sendTileStateUpdate();
     }
+  }
+
+  private bindVideoElementToTile(videoElement: HTMLVideoElement): boolean {
+    let videoElementUpdated = false;
+
+    let currentVideoElement = this.getBoundVideoElementById(videoElement.id);
+
+    if (currentVideoElement.boundVideoElement !== videoElement) {
+      currentVideoElement.boundVideoElement = videoElement;
+      videoElementUpdated = true;
+    }
+    if (currentVideoElement.videoElementCSSHeightPixels !== videoElement.clientHeight) {
+      currentVideoElement.videoElementCSSHeightPixels = videoElement.clientHeight;
+      videoElementUpdated = true;
+    }
+    if (currentVideoElement.videoElementCSSWidthPixels !== videoElement.clientWidth) {
+      currentVideoElement.videoElementCSSWidthPixels = videoElement.clientWidth;
+      videoElementUpdated = true;
+    }
+    return videoElementUpdated;
+  }
+
+  private getBoundVideoElementById(id: string): VideoElement {
+    let videoElement: VideoElement = null;
+    let filteredboundVideoElementsById = this.tileState.boundVideoElements.filter(
+      boundVideoElement => boundVideoElement.id === id
+    );
+    if (filteredboundVideoElementsById.length > 0) {
+      videoElement = filteredboundVideoElementsById[0];
+    } else {
+      videoElement = new VideoElement();
+      videoElement.id = id;
+      this.tileState.boundVideoElements.push(videoElement);
+    }
+    return videoElement;
+  }
+
+  private updateBoundVideoElement(): void {
+    if (this.tileState.boundVideoElements.length > 0) {
+      let firstBoundVideoElement = this.tileState.boundVideoElements[0];
+      this.tileState.boundVideoElement = firstBoundVideoElement.boundVideoElement;
+      this.tileState.videoElementCSSHeightPixels =
+        firstBoundVideoElement.videoElementCSSHeightPixels;
+      this.tileState.videoElementCSSWidthPixels = firstBoundVideoElement.videoElementCSSWidthPixels;
+      this.tileState.videoElementPhysicalHeightPixels =
+        firstBoundVideoElement.videoElementPhysicalHeightPixels;
+      this.tileState.videoElementPhysicalWidthPixels =
+        firstBoundVideoElement.videoElementPhysicalWidthPixels;
+    }
+  }
+
+  private removeAllBoundVideoElements(): void {
+    this.tileState.boundVideoElements = [];
+    this.tileState.boundVideoElement = null;
+    this.tileState.videoElementCSSWidthPixels = null;
+    this.tileState.videoElementCSSHeightPixels = null;
+    this.tileState.videoElementPhysicalHeightPixels = null;
+    this.tileState.videoElementPhysicalWidthPixels = null;
   }
 
   pause(): void {

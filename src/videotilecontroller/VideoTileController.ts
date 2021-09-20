@@ -16,7 +16,7 @@ export default interface VideoTileController {
    * This should also be called any time the layout of the video element changes, for example, when changing its
    * dimensions.
    */
-  bindVideoElement(tileId: number, videoElement: HTMLVideoElement): void;
+  bindVideoElement(tileId: number, videoElement: HTMLVideoElement | HTMLVideoElement[]): void;
 
   /**
    * Unbinds the video element from the tile if it exists for the provided tileId.

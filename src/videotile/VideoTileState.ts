@@ -1,6 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+import VideoElement from "./VideoElement";
+
 /**
  * [[VideoTileState]] encapsulates the state of a [[VideoTile]]
  */
@@ -59,6 +61,11 @@ export default class VideoTileState {
    * The HTMLVideoElement bound with the [[VideoTile]].
    */
   boundVideoElement: HTMLVideoElement | null = null;
+
+  /**
+   * The VideoElement[] bound with the [[VideoTile]].
+   */
+  boundVideoElements: VideoElement[] | null = null;
 
   /**
    * The nameplate for the [[VideoTile]]. SDK users should use boundExternalUserId for user id instead of this field.
@@ -120,6 +127,7 @@ export default class VideoTileState {
     cloned.boundExternalUserId = this.boundExternalUserId;
     cloned.boundVideoStream = this.boundVideoStream;
     cloned.boundVideoElement = this.boundVideoElement;
+    cloned.boundVideoElements = this.boundVideoElements;
     cloned.nameplate = this.nameplate;
     cloned.videoStreamContentWidth = this.videoStreamContentWidth;
     cloned.videoStreamContentHeight = this.videoStreamContentHeight;

@@ -44,13 +44,13 @@ export default class DefaultVideoTileController implements VideoTileController {
     return monitor.destroy();
   }
 
-  bindVideoElement(tileId: number, videoElement: HTMLVideoElement | null): void {
+  bindVideoElement(tileId: number, videoElements: HTMLVideoElement | HTMLVideoElement[] | null): void {
     const tile = this.getVideoTile(tileId);
     if (tile === null) {
       this.logger.warn(`Ignoring video element binding for unknown tile id ${tileId}`);
       return;
     }
-    tile.bindVideoElement(videoElement);
+    tile.bindVideoElement(videoElements);
   }
 
   unbindVideoElement(tileId: number): void {
