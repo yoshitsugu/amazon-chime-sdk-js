@@ -204,14 +204,14 @@ export default class DefaultVideoTile implements DevicePixelRatioObserver, Video
     let tileUpdated = false;
 
     if (videoElements == null) {
-      this.removeAllBoundVideoElements();
-      tileUpdated = true;
+      this.unBindAllVideoElements();
+      return;
     } else if (Array.isArray(videoElements)) {
-      videoElements.forEach((videoElement) => {
-        if(this.bindVideoElementToTile(videoElement)){
+      videoElements.forEach(videoElement => {
+        if (this.bindVideoElementToTile(videoElement)) {
           tileUpdated = true;
         }
-      })
+      });
     } else {
       tileUpdated = this.bindVideoElementToTile(videoElements);
     }
@@ -219,6 +219,44 @@ export default class DefaultVideoTile implements DevicePixelRatioObserver, Video
       this.updateBoundVideoElement();
       this.sendTileStateUpdate();
     }
+  }
+
+  unBindVideoElements(videoElements: HTMLVideoElement[] | null): void {
+    let tileUpdated = false;
+
+    if(videoElements != null){
+        videoElements.forEach((videoElement: HTMLVideoElement) => {
+          if (this.unbindVideoElementToTile(videoElement)) {
+            tileUpdated = true;
+          }
+        });
+    }
+
+    if (tileUpdated) {
+      this.updateBoundVideoElement();
+      this.sendTileStateUpdate();
+    }
+  }
+
+  unBindAllVideoElements(): void {
+    this.removeAllBoundVideoElements();
+    this.updateBoundVideoElement();
+    this.sendTileStateUpdate();
+  }
+
+  private unbindVideoElementToTile(videoElement: HTMLVideoElement): boolean{
+    let videoElementUpdated = false;
+
+
+    this.tileState.boundVideoElements = this.tileState.boundVideoElements.filter((boundVideoElement:VideoElement) => {
+      if (boundVideoElement.id === videoElement.id){
+        videoElementUpdated = true;
+        DefaultVideoTile.disconnectVideoStreamFromVideoElement(videoElement, false);
+        return false;
+      }
+      return true;
+    });
+    return videoElementUpdated;
   }
 
   private bindVideoElementToTile(videoElement: HTMLVideoElement): boolean {
@@ -271,9 +309,8 @@ export default class DefaultVideoTile implements DevicePixelRatioObserver, Video
   }
 
   private removeAllBoundVideoElements(): void {
-
     this.tileState.boundVideoElements.forEach((videoElement: VideoElement) => {
-      DefaultVideoTile.disconnectVideoStreamFromVideoElement(videoElement.boundVideoElement,false);
+      DefaultVideoTile.disconnectVideoStreamFromVideoElement(videoElement.boundVideoElement, false);
     });
 
     this.tileState.boundVideoElements = [];
@@ -361,13 +398,13 @@ export default class DefaultVideoTile implements DevicePixelRatioObserver, Video
       ) {
         videoElement.videoElementPhysicalWidthPixels =
           this.tileState.devicePixelRatio * videoElement.videoElementCSSWidthPixels;
-          videoElement.videoElementPhysicalHeightPixels =
+        videoElement.videoElementPhysicalHeightPixels =
           this.tileState.devicePixelRatio * videoElement.videoElementCSSHeightPixels;
       } else {
         videoElement.videoElementPhysicalWidthPixels = null;
         videoElement.videoElementPhysicalHeightPixels = null;
       }
-    })
+    });
   }
 
   private updateVideoStreamOnVideoElement(): void {

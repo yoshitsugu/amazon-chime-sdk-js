@@ -35,6 +35,16 @@
       </div>
     </div>
 
+    <div style="width: 100%; display: flex; flex-direction: row;">
+      <div id="tile-3" class="video-tile" style="width: 50%;">
+        <video id="video-2" class="video-tile-video" style="margin: 1rem; width: 100%;"></video>
+      </div>
+
+      <div id="tile-4" class="video-tile" style="width: 50%;">
+        <video id="video-3" class="video-tile-video" style="margin: 1rem; width: 100%;"></video>
+      </div>
+    </div>
+
     <div id="button-container">
       <button id="start-local-video" type="button"  title="Start Local Video">
         Start Local Video Tile
@@ -52,6 +62,16 @@
         <input type="text" id="bind-video-element-video-element" placeholder="Video Element Id">
         <button id="bind-video-element" type="submit">
           Bind Video Element
+        </button>
+      </form>
+
+      <form id="bind-multiple-video-element-form">
+        <label for="bind-multiple-video-element-tile-id">Tile Id</label>
+        <input type="text" id="bind-multiple-video-element-tile-id" placeholder="Tile Id">
+        <label for="bind-multiple-video-element-video-elements">Video Element Ids</label>
+        <input style="width: 250px;" type="text" id="bind-multiple-video-element-video-elements" placeholder="Video Element Id-1, Video Element Id-2">
+        <button id="bind-multiple-video-element" type="submit">
+          Bind Multiple Video Element
         </button>
       </form>
 

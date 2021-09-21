@@ -111,6 +111,19 @@ export class DemoMeetingApp implements AudioVideoObserver {
       bindVideoElementForm.reset();
     });
 
+    const bindMultipleVideoElementForm = document.getElementById('bind-multiple-video-element-form') as HTMLFormElement;
+    const bindMultipleVideoElementTile = document.getElementById('bind-multiple-video-element-tile-id') as HTMLInputElement;
+    const bindMultipleVideoElementVideoElements = document.getElementById('bind-multiple-video-element-video-elements') as HTMLInputElement;
+    let videoElements : HTMLVideoElement[] = [];
+    bindMultipleVideoElementForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      videoElements = bindMultipleVideoElementVideoElements.value.split(',').map((id) => {
+        return (document.getElementById(id) as HTMLVideoElement);
+      });
+      this.audioVideo.bindVideoElement(parseInt(bindMultipleVideoElementTile.value),videoElements);
+      bindVideoElementForm.reset();
+    });
+
     const unbindVideoElementForm = document.getElementById('unbind-video-element-form') as HTMLFormElement;
     const unbindVideoElementTile = document.getElementById('unbind-video-element-tile-id') as HTMLInputElement;
     unbindVideoElementForm.addEventListener('submit', e => {

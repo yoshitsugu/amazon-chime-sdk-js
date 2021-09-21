@@ -47,6 +47,20 @@ export default interface VideoTile {
   bindVideoElement(videoElement: HTMLVideoElement | HTMLVideoElement[] | null): void;
 
   /**
+   * Unbinds  all the video elements that are currently bounded to the tile and sends out updates. 
+   * This must also be called anytime we want to remove all the video elements bound to a tile,
+   * for example, When we have multiple video elements bound to a VideoTile and we want to remove all the video elements.
+   */
+  unBindAllVideoElements(): void;
+
+  /**
+   * Unbinds the video elements that are currently bounded to the tile and sends out updates. 
+   * This must also be called anytime we want to remove some particular video elements bound to a tile,
+   * for example, When we have multiple video elements bound to a VideoTile and we want to remove one or multiple video elements.
+   */
+  unBindVideoElements(videoElements: HTMLVideoElement[] | null): void;
+
+  /**
    * Pauses the tile if it is not paused. When paused, the tile moves to an inactive state.
    * The updated video tile state is sent to the meeting session’s
    * AudioVideoObserver's [[videoTileDidUpdate]] callback.
