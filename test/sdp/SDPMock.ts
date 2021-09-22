@@ -870,6 +870,7 @@ a=ice-pwd:fake\r
 a=fingerprint:sha-256 fake\r
 a=setup:passive\r
 a=sendrecv\r
+a=extmap:15 http://www.webrtc.org/experiments/rtp-hdrext/video-layers-allocation00
 a=mid:video\r
 a=extmap:2 urn:ietf:params:rtp-hdrext:toffset\r
 a=extmap:3 http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time\r

@@ -85,6 +85,7 @@ export default class SubscribeAndReceiveSubscribeAckTask extends BaseTask {
       // TODO: handle check-in mode, or remove this param
       true
     );
+    console.log(`sending subscribe: ${JSON.stringify(subscribe)}`);
     this.context.logger.info(`sending subscribe: ${JSON.stringify(subscribe)}`);
     this.context.signalingClient.subscribe(subscribe);
 

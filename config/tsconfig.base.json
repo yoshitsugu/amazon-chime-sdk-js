@@ -11,7 +11,7 @@
     ],
     "module": "commonjs",
     "noImplicitAny": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "sourceMap": true,
     "stripInternal": true,
     "target": "ES2015"

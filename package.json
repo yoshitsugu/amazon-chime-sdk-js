@@ -33,7 +33,7 @@
     "postdoc": "node script/update-typedoc-link.js",
     "test": "npm run test:fast",
     "test:glob": "cross-env TS_NODE_PROJECT=test/tsconfig.json TS_NODE_CACHE=false nyc mocha --stack-trace-limit=1000  --async-stack-traces -v -r esm -rv ts-node/register -- ",
-    "test:fast": "npm run test:glob \"test/**/*.test.ts\"",
+    "test:fast": "npm run test:glob \"test/audiovideocontroller/DefaultAudioVideoController.test.ts\"",
     "test:slow": "cross-env MOCHA_TEST_DELAY_MS=100 npm run test:fast",
     "test:retry": "(npm run test:fast || npm run test:fast || npm run test:fast || npm run test:fast || npm run test:fast)",
     "test:integration": "cd ./integration/js && npm run test ",
