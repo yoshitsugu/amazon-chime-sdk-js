@@ -53,14 +53,18 @@ export default class DefaultVideoTileController implements VideoTileController {
     tile.bindVideoElement(videoElements);
   }
 
-  unbindVideoElement(tileId: number): void {
-    this.bindVideoElement(tileId, null);
-  }
-
-  // unbindVideoElement(tileId: number , videoElements : HTMLVideoElement[] = []): void {
-
-  //   if(videoElements.length == 0)
+  // unbindVideoElement(tileId: number): void {
+  //   this.bindVideoElement(tileId, null);
   // }
+
+  unbindVideoElement(tileId: number , videoElements : HTMLVideoElement[] = []): void {
+    const tile = this.getVideoTile(tileId);
+    if(videoElements.length == 0){
+      tile.unBindAllVideoElements();
+    }else{
+      tile.unBindVideoElements(videoElements);
+    }
+  }
 
   startLocalVideoTile(): number {
     const tile = this.findOrCreateLocalVideoTile();

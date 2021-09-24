@@ -89,12 +89,12 @@ export default class DefaultVideoTile implements DevicePixelRatioObserver, Video
 
       // We must remove all the tracks from the MediaStream before
       // clearing the `srcObject` to prevent Safari from crashing.
-      const mediaStream = videoElement.srcObject as MediaStream;
-      const tracks = mediaStream.getTracks();
-      for (const track of tracks) {
-        track.stop();
-        mediaStream.removeTrack(track);
-      }
+      //const mediaStream = videoElement.srcObject as MediaStream;
+      // const tracks = mediaStream.getTracks();
+      // for (const track of tracks) {
+      //   //track.stop();
+      //   mediaStream.removeTrack(track);
+      // }
 
       // Need to yield the message loop before clearing `srcObject` to
       // prevent Safari from crashing.
@@ -125,15 +125,14 @@ export default class DefaultVideoTile implements DevicePixelRatioObserver, Video
 
   destroy(): void {
     this.devicePixelRatioMonitor.removeObserver(this);
-    if (
-      this.tileState.boundVideoElement &&
-      this.tileState.boundVideoElement.srcObject === this.tileState.boundVideoStream
-    ) {
-      DefaultVideoTile.disconnectVideoStreamFromVideoElement(
-        this.tileState.boundVideoElement,
-        false
-      );
-    }
+    this.tileState.boundVideoElements.forEach((videoElement : VideoElement) => {
+      if(videoElement.boundVideoElement.srcObject == this.tileState.boundVideoStream){
+        DefaultVideoTile.disconnectVideoStreamFromVideoElement(
+          videoElement.boundVideoElement,
+          false
+        );
+      }
+    })
     this.tileState = new VideoTileState();
   }
 

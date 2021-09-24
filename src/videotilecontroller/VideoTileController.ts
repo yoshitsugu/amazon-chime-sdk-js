@@ -24,7 +24,7 @@ export default interface VideoTileController {
    * This does not remove the provided tileId mapping from the tile map in the [[DefaultVideoTileController]].
    * To remove the mapping and destroy the tile for this tileId, you can use [[removeVideoTile]].
    */
-  unbindVideoElement(tileId: number): void;
+  unbindVideoElement(tileId: number, videoElements ?: HTMLVideoElement[]): void;
 
   /**
    * Starts sharing the local video tile by creating a new video tile if one does not already exist.

@@ -5,7 +5,7 @@ import VideoTile from '../videotile/VideoTile';
 
 export default interface VideoTileControllerFacade {
   bindVideoElement(tileId: number, videoElement: HTMLVideoElement | HTMLVideoElement[]): void;
-  unbindVideoElement(tileId: number): void;
+  unbindVideoElement(tileId: number, videoElement: HTMLVideoElement[]): void;
   startLocalVideoTile(): number;
   stopLocalVideoTile(): void;
   hasStartedLocalVideoTile(): boolean;

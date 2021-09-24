@@ -86,8 +86,8 @@ export default class DefaultAudioVideoFacade implements AudioVideoFacade {
     }
   }
 
-  unbindVideoElement(tileId: number): void {
-    this.videoTileController.unbindVideoElement(tileId);
+  unbindVideoElement(tileId: number, videoElements : HTMLVideoElement[] = []): void {
+    this.videoTileController.unbindVideoElement(tileId, videoElements);
     this.trace('unbindVideoElement', tileId);
   }
 

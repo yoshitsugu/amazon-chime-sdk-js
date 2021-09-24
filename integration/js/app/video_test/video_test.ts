@@ -114,10 +114,9 @@ export class DemoMeetingApp implements AudioVideoObserver {
     const bindMultipleVideoElementForm = document.getElementById('bind-multiple-video-element-form') as HTMLFormElement;
     const bindMultipleVideoElementTile = document.getElementById('bind-multiple-video-element-tile-id') as HTMLInputElement;
     const bindMultipleVideoElementVideoElements = document.getElementById('bind-multiple-video-element-video-elements') as HTMLInputElement;
-    let videoElements : HTMLVideoElement[] = [];
     bindMultipleVideoElementForm.addEventListener('submit', async e => {
       e.preventDefault();
-      videoElements = bindMultipleVideoElementVideoElements.value.split(',').map((id) => {
+      let videoElements = bindMultipleVideoElementVideoElements.value.split(',').map((id) => {
         return (document.getElementById(id) as HTMLVideoElement);
       });
       this.audioVideo.bindVideoElement(parseInt(bindMultipleVideoElementTile.value),videoElements);
@@ -126,9 +125,13 @@ export class DemoMeetingApp implements AudioVideoObserver {
 
     const unbindVideoElementForm = document.getElementById('unbind-video-element-form') as HTMLFormElement;
     const unbindVideoElementTile = document.getElementById('unbind-video-element-tile-id') as HTMLInputElement;
+    const unbindMultipleVideoElementVideoElements = document.getElementById('unbind-multiple-video-element-video-elements') as HTMLInputElement;
     unbindVideoElementForm.addEventListener('submit', e => {
       e.preventDefault();
-      this.audioVideo.unbindVideoElement(parseInt(unbindVideoElementTile.value));
+      let videoElements = unbindMultipleVideoElementVideoElements.value.split(',').filter((x:String) => x.length>0 ).map((id) => {
+        return (document.getElementById(id) as HTMLVideoElement);
+      }).filter(x => x !== null);
+      this.audioVideo.unbindVideoElement(parseInt(unbindVideoElementTile.value),videoElements);
       unbindVideoElementForm.reset();
     });
 
