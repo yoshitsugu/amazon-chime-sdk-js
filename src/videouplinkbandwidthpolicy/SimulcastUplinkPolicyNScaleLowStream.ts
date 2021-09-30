@@ -328,17 +328,16 @@ export default class SimulcastUplinkPolicyNScaleLowStream implements SimulcastUp
   }
 
   private calculateBitRateKpsForLowResolutionStream(): number {
-    switch (this.numSenders) {
-      case 1-4:
-        return 300;
-      case 5-8:
-        return 250;
-      case 7-12:
-        return 200;
-      case 13-16:
-        return 150;
-      case 16-20:
-        return 100;
+    if (this.numSenders <= 4) {
+      return 300;
+    } else if (this.numSenders <= 8) {
+      return 250;
+    } else if (this.numSenders <= 12) {
+      return 200;
+    } else if (this.numSenders <= 16) {
+      return 150;
+    } else {
+      return 100;
     }
   }
 
