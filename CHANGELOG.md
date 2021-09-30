@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add API `isSimulcastSupported` so applications can check whether simulcast can be enabled and pass corresponding
   policy.
+- Add ContentIdentification, ContentRedaction and transcript stabilization support for Amazon Transcribe and Amazon Transcribe Medical for live transcription.
   
 ### Removed
 

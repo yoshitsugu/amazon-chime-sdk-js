@@ -135,7 +135,6 @@ describe('TranscriptEvent', () => {
     const event = makeSdkTranscript();
     const data = SdkTranscriptFrame.encode(makeSdkTranscriptFrame([event])).finish();
     logBase64FromUint8Array(data);
-
     // The steps above generates data below passed directly as test input
     const dataMessage = makeTranscriptDataMessageFrom(
       TRANSCRIPT_EVENT_TEST_VECTORS.TRANSCRIPT_SINGLE
@@ -147,11 +146,11 @@ describe('TranscriptEvent', () => {
       assert.fail();
       return;
     }
-
     expect(actualEvents[0].results.length).to.equal(1);
     expect(actualEvents[0].results[0].alternatives.length).to.equal(1);
     expect(actualEvents[0].results[0].alternatives[0].transcript).to.eql('Test.');
     expect(actualEvents[0].results[0].alternatives[0].items.length).to.eql(2);
+    expect(actualEvents[0].results[0].alternatives[0].entities.length).to.eql(2);
     expect(actualEvents[0].results[0].alternatives[0].items[0].content).to.eql('Test');
     expect(actualEvents[0].results[0].alternatives[0].items[0].type).to.eql(
       TranscriptItemType.PRONUNCIATION
@@ -163,6 +162,8 @@ describe('TranscriptEvent', () => {
       'speaker-external-user-id'
     );
     expect(actualEvents[0].results[0].alternatives[0].items[0].vocabularyFilterMatch).to.eql(true);
+    expect(actualEvents[0].results[0].alternatives[0].items[0].confidence).to.eql('1');
+    expect(actualEvents[0].results[0].alternatives[0].items[0].stable).to.eql(true);
     expect(actualEvents[0].results[0].alternatives[0].items[1].content).to.eql('.');
     expect(actualEvents[0].results[0].alternatives[0].items[1].type).to.eql(
       TranscriptItemType.PUNCTUATION
@@ -174,6 +175,20 @@ describe('TranscriptEvent', () => {
       'speaker-external-user-id'
     );
     expect(actualEvents[0].results[0].alternatives[0].items[1].vocabularyFilterMatch).to.be
+      .undefined;
+    expect(actualEvents[0].results[0].alternatives[0].items[1].confidence).to.be
+      .undefined;
+    expect(actualEvents[0].results[0].alternatives[0].items[1].stable).to.be
+      .undefined;
+    expect(actualEvents[0].results[0].alternatives[0].entities[0].category).to.eql('PII');
+    expect(actualEvents[0].results[0].alternatives[0].entities[0].confidence).to.eql(1.0);
+    expect(actualEvents[0].results[0].alternatives[0].entities[0].content).to.eql(
+      'Content is a PII data'
+    );
+    expect(actualEvents[0].results[0].alternatives[0].entities[0].type).to.eql(
+      'Address'
+    );
+    expect(actualEvents[0].results[0].alternatives[0].entities[1].type).to.be
       .undefined;
   });
 

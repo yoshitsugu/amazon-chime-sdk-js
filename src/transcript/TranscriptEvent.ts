@@ -1,6 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+import { TranscriptEntity } from '..';
 import DataMessage from '../datamessage/DataMessage';
 import {
   SdkTranscriptFrame,
@@ -95,6 +96,14 @@ export class TranscriptEventConverter {
                 transcriptItem.vocabularyFilterMatch = item.vocabularyFilterMatch;
               }
 
+              if (item.stable) {
+                transcriptItem.stable = item.stable;
+              }
+
+              if (item.confidence) {
+                transcriptItem.confidence = item.confidence;
+              }
+
               switch (item.type) {
                 case SdkTranscriptItem.Type.PRONUNCIATION:
                   transcriptItem.type = TranscriptItemType.PRONUNCIATION;
@@ -105,6 +114,24 @@ export class TranscriptEventConverter {
               }
 
               transcriptAlternative.items.push(transcriptItem);
+            }
+            
+            for (const entity of alternative.entities) {
+              if (!transcriptAlternative.entities) {
+                transcriptAlternative.entities = [];
+              }
+              const transcriptEntity: TranscriptEntity = {
+                category: entity.category,
+                confidence: entity.confidence,
+                content: entity.content,
+                startTime: entity.startTime as number,
+                endTime: entity.endTime as number,
+              };
+
+              if (entity.type) {
+                transcriptEntity.type = entity.type;
+              }
+              transcriptAlternative.entities.push(transcriptEntity);
             }
 
             transcriptResult.alternatives.push(transcriptAlternative);

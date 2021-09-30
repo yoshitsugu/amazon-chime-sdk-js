@@ -4,6 +4,7 @@
 import {
   SdkTranscript,
   SdkTranscriptAlternative,
+  SdkTranscriptEntity,
   SdkTranscriptEvent,
   SdkTranscriptFrame,
   SdkTranscriptionStatus,
@@ -26,7 +27,7 @@ export const TRANSCRIPT_EVENT_TEST_VECTORS = {
     'CisKKQgBENKF2MwEGgt0ZXN0LXJlZ2lvbiISdGVzdC1jb25maWd1cmF0aW9uCisKKQgCENKF2MwEGgt0ZXN0LXJlZ2lvbiISdGVzdC1jb25maWd1cmF0aW9uCisKKQgDENKF2MwEGgt0ZXN0LXJlZ2lvbiISdGVzdC1jb25maWd1cmF0aW9uCisKKQgEENKF2MwEGgt0ZXN0LXJlZ2lvbiISdGVzdC1jb25maWd1cmF0aW9uCisKKQgFENKF2MwEGgt0ZXN0LXJlZ2lvbiISdGVzdC1jb25maWd1cmF0aW9u'
   ),
   TRANSCRIPT_SINGLE: decode(
-    'Cp0BEpoBCpcBCpQBCkcKBFRlc3QQ+eS4xbAvGhNzcGVha2VyLWF0dGVuZGVlLWlkIhhzcGVha2VyLWV4dGVybmFsLXVzZXItaWQoo924xbAvMAE4AQpCCgEuEIvluMWwLxoTc3BlYWtlci1hdHRlbmRlZS1pZCIYc3BlYWtlci1leHRlcm5hbC11c2VyLWlkKIrluMWwLzACEgVUZXN0Lg=='
+    'CpUCEpICCo8CCowCCkwKBFRlc3QQ++uqzMQvGhNzcGVha2VyLWF0dGVuZGVlLWlkIhhzcGVha2VyLWV4dGVybmFsLXVzZXItaWQopeSqzMQvMAE4AUIBMUgBCkIKAS4QjeyqzMQvGhNzcGVha2VyLWF0dGVuZGVlLWlkIhhzcGVha2VyLWV4dGVybmFsLXVzZXItaWQojOyqzMQvMAISBVRlc3QuGjwKA1BJSREAAAAAAADwPxoVQ29udGVudCBpcyBhIFBJSSBkYXRhII3sqszELyiO7KrMxC8yB0FkZHJlc3MaMwoDUElJEQAAAAAAAPA/GhVDb250ZW50IGlzIGEgUElJIGRhdGEgjeyqzMQvKI7sqszELw=='
   ),
   TRANSCRIPT_MIXED: decode(
     'CisKKQgBENKF2MwEGgt0ZXN0LXJlZ2lvbiISdGVzdC1jb25maWd1cmF0aW9uCp0BEpoBCpcBCpQBCkcKBFRlc3QQ++S4xbAvGhNzcGVha2VyLWF0dGVuZGVlLWlkIhhzcGVha2VyLWV4dGVybmFsLXVzZXItaWQopd24xbAvMAE4AQpCCgEuEI3luMWwLxoTc3BlYWtlci1hdHRlbmRlZS1pZCIYc3BlYWtlci1leHRlcm5hbC11c2VyLWlkKIzluMWwLzACEgVUZXN0Lg=='
@@ -83,6 +84,8 @@ export function makeSdkTranscript(): SdkTranscriptEvent {
   item1.startTime = Date.now() - 1000;
   item1.endTime = Date.now() - 18;
   item1.vocabularyFilterMatch = true;
+  item1.confidence = '1';
+  item1.stable = true;
 
   const item2 = SdkTranscriptItem.create();
   item2.content = '.';
@@ -93,7 +96,23 @@ export function makeSdkTranscript(): SdkTranscriptEvent {
   item2.endTime = Date.now();
 
   alternative.items = [item1, item2];
+  const entity1 = SdkTranscriptEntity.create();
+  entity1.category = 'PII';
+  entity1.confidence = 1.0;
+  entity1.content = 'Content is a PII data';
+  entity1.startTime = Date.now();
+  entity1.endTime = Date.now() - 1;
+  entity1.type = 'Address';
+
+  const entity2 = SdkTranscriptEntity.create();
+  entity2.category = 'PII';
+  entity2.confidence = 1.0;
+  entity2.content = 'Content is a PII data';
+  entity2.startTime = Date.now();
+  entity2.endTime = Date.now() - 1;
+
   alternative.transcript = 'Test.';
+  alternative.entities = [entity1,entity2];
   result.alternatives = [alternative];
   transcript.results = [result];
   event.transcript = transcript;
