@@ -227,6 +227,7 @@ import SimulcastLayers from './simulcastlayers/SimulcastLayers';
 import SimulcastTransceiverController from './transceivercontroller/SimulcastTransceiverController';
 import SimulcastUplinkObserver from './videouplinkbandwidthpolicy/SimulcastUplinkObserver';
 import SimulcastUplinkPolicy from './videouplinkbandwidthpolicy/SimulcastUplinkPolicy';
+import SimulcastUplinkPolicyNScaleLowStream from './videouplinkbandwidthpolicy/SimulcastUplinkPolicyNScaleLowStream';
 import SimulcastVideoStreamIndex from './videostreamindex/SimulcastVideoStreamIndex';
 import SingleNodeAudioTransformDevice from './devicecontroller/SingleNodeAudioTransformDevice';
 import Some from './maybe/Some';
@@ -530,6 +531,7 @@ export {
   SimulcastTransceiverController,
   SimulcastUplinkObserver,
   SimulcastUplinkPolicy,
+  SimulcastUplinkPolicyNScaleLowStream,
   SimulcastVideoStreamIndex,
   SingleNodeAudioTransformDevice,
   Some,
