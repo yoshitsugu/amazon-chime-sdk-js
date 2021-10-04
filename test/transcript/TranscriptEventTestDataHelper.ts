@@ -112,7 +112,7 @@ export function makeSdkTranscript(): SdkTranscriptEvent {
   entity2.endTime = Date.now() - 1;
 
   alternative.transcript = 'Test.';
-  alternative.entities = [entity1,entity2];
+  alternative.entities = [entity1, entity2];
   result.alternatives = [alternative];
   transcript.results = [result];
   event.transcript = transcript;

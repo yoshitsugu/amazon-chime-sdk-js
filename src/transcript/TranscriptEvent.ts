@@ -9,12 +9,12 @@ import {
 } from '../signalingprotocol/SignalingProtocol';
 import Transcript from './Transcript';
 import TranscriptAlternative from './TranscriptAlternative';
+import TranscriptEntity from './TranscriptEntity';
 import TranscriptionStatus from './TranscriptionStatus';
 import TranscriptionStatusType from './TranscriptionStatusType';
 import TranscriptItem from './TranscriptItem';
 import TranscriptItemType from './TranscriptItemType';
 import TranscriptResult from './TranscriptResult';
-import TranscriptEntity from './TranscriptEntity';
 
 const TranscriptionStatusTypes = {
   [SdkTranscriptionStatus.Type.STARTED]: TranscriptionStatusType.STARTED,

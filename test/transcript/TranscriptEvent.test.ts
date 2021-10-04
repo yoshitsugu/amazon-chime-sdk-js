@@ -176,20 +176,15 @@ describe('TranscriptEvent', () => {
     );
     expect(actualEvents[0].results[0].alternatives[0].items[1].vocabularyFilterMatch).to.be
       .undefined;
-    expect(actualEvents[0].results[0].alternatives[0].items[1].confidence).to.be
-      .undefined;
-    expect(actualEvents[0].results[0].alternatives[0].items[1].stable).to.be
-      .undefined;
+    expect(actualEvents[0].results[0].alternatives[0].items[1].confidence).to.be.undefined;
+    expect(actualEvents[0].results[0].alternatives[0].items[1].stable).to.be.undefined;
     expect(actualEvents[0].results[0].alternatives[0].entities[0].category).to.eql('PII');
     expect(actualEvents[0].results[0].alternatives[0].entities[0].confidence).to.eql(1.0);
     expect(actualEvents[0].results[0].alternatives[0].entities[0].content).to.eql(
       'Content is a PII data'
     );
-    expect(actualEvents[0].results[0].alternatives[0].entities[0].type).to.eql(
-      'Address'
-    );
-    expect(actualEvents[0].results[0].alternatives[0].entities[1].type).to.be
-      .undefined;
+    expect(actualEvents[0].results[0].alternatives[0].entities[0].type).to.eql('Address');
+    expect(actualEvents[0].results[0].alternatives[0].entities[1].type).to.be.undefined;
   });
 
   it('handles multiple transcript event of mixed type', async () => {
