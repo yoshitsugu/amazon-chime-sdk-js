@@ -1,7 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import { TranscriptEntity } from '..';
 import DataMessage from '../datamessage/DataMessage';
 import {
   SdkTranscriptFrame,
@@ -15,6 +14,7 @@ import TranscriptionStatusType from './TranscriptionStatusType';
 import TranscriptItem from './TranscriptItem';
 import TranscriptItemType from './TranscriptItemType';
 import TranscriptResult from './TranscriptResult';
+import TranscriptEntity from './TranscriptEntity';
 
 const TranscriptionStatusTypes = {
   [SdkTranscriptionStatus.Type.STARTED]: TranscriptionStatusType.STARTED,
@@ -115,7 +115,7 @@ export class TranscriptEventConverter {
 
               transcriptAlternative.items.push(transcriptItem);
             }
-            
+
             for (const entity of alternative.entities) {
               if (!transcriptAlternative.entities) {
                 transcriptAlternative.entities = [];
