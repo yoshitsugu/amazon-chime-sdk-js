@@ -29,6 +29,11 @@ export enum SimulcastLayers {
    * High resolution video stream.
    */
   High,
+
+  /**
+   * Low, medium, and high resolution video streams.
+   */
+  LowMediumAndHigh,
 }
 
 export default SimulcastLayers;

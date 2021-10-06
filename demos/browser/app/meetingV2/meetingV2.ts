@@ -45,7 +45,7 @@ import {
   NoOpVideoFrameProcessor,
   RemovableAnalyserNode,
   SimulcastLayers,
-  SimulcastUplinkPolicyNScaleLowStream,
+  SimulcastUplinkPolicyThreeLayers,
   TargetDisplaySize,
   TimeoutScheduler,
   Transcript,
@@ -363,6 +363,7 @@ const SimulcastLayerMapping = {
   [SimulcastLayers.Medium]: 'Medium',
   [SimulcastLayers.MediumAndHigh]: 'Medium and High',
   [SimulcastLayers.High]: 'High',
+  [SimulcastLayers.LowMediumAndHigh]: 'Low, Medium, and High',
 };
 
 const LANGUAGES_NO_WORD_SEPARATOR = new Set([
@@ -682,6 +683,17 @@ export class DemoMeetingApp
       (document.getElementById('planB') as HTMLInputElement).disabled = true;
     }
 
+    document.getElementById('simulcast').addEventListener('change', _e => {
+      const enableSimulcast = (document.getElementById('simulcast') as HTMLInputElement).checked;
+
+      const simulcastPolicyElem = document.getElementById('simulcast-policy') as HTMLSelectElement;
+
+      if (enableSimulcast) {
+        simulcastPolicyElem.style.display = 'block';
+      } else {
+        simulcastPolicyElem.style.display = 'none';
+      }
+    });
     document.getElementById('priority-downlink-policy').addEventListener('change', e => {
       this.usePriorityBasedDownlinkPolicy = (document.getElementById('priority-downlink-policy') as HTMLInputElement).checked;
 
@@ -1697,7 +1709,10 @@ export class DemoMeetingApp
     }
     configuration.enableSimulcastForUnifiedPlanChromiumBasedBrowsers = this.enableSimulcast;
     if (this.enableSimulcast) {
-      configuration.videoUplinkBandwidthPolicy = new SimulcastUplinkPolicyNScaleLowStream(configuration.credentials.attendeeId, this.meetingLogger);
+      const policy = (document.getElementById('simulcast-policy') as HTMLSelectElement).value;
+      if (policy === 'three-layers') {
+        configuration.videoUplinkBandwidthPolicy = new SimulcastUplinkPolicyThreeLayers(configuration.credentials.attendeeId, this.meetingLogger);
+      }
     }
 
     if (this.usePriorityBasedDownlinkPolicy) {

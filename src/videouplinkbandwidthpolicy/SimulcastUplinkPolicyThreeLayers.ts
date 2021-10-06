@@ -14,22 +14,26 @@ import SimulcastUplinkObserver from './SimulcastUplinkObserver';
 import SimulcastUplinkPolicy from './SimulcastUplinkPolicy';
 
 type EncodingParams = {
+  active: boolean;
   maxBitrateKbps: number;
   scaleResolutionDownBy: number;
-}
+};
 
 /**
  * [[SimulcastUplinkPolicyNScaleLowStream]] determines capture and encode
  *  parameters that reacts to estimated uplink bandwidth
  */
-export default class SimulcastUplinkPolicyNScaleLowStream implements SimulcastUplinkPolicy {
-  static readonly defaultUplinkBandwidthKbps: number = 1200;
+export default class SimulcastUplinkPolicyThreeLayers implements SimulcastUplinkPolicy {
+  static readonly defaultUplinkBandwidthKbps: number = 1600;
   static readonly startupDurationMs: number = 6000;
   static readonly holdDownDurationMs: number = 4000;
   static readonly defaultMaxFrameRate = 15;
   // Current rough estimates where webrtc disables streams
   static readonly kHiDisabledRate = 700;
   static readonly kMidDisabledRate = 240;
+  static readonly kHiAndMidDisableRate =
+    SimulcastUplinkPolicyThreeLayers.kHiDisabledRate +
+    SimulcastUplinkPolicyThreeLayers.kMidDisabledRate;
 
   private numSenders: number = 0;
   private numParticipants: number = -1;
@@ -39,7 +43,8 @@ export default class SimulcastUplinkPolicyNScaleLowStream implements SimulcastUp
   private currentQualityMap = new Map<string, RTCRtpEncodingParameters>();
   private newActiveStreams: SimulcastLayers = SimulcastLayers.LowAndHigh;
   private currentActiveStreams: SimulcastLayers = SimulcastLayers.LowAndHigh;
-  private lastUplinkBandwidthKbps: number = SimulcastUplinkPolicyNScaleLowStream.defaultUplinkBandwidthKbps;
+  private lastUplinkBandwidthKbps: number =
+    SimulcastUplinkPolicyThreeLayers.defaultUplinkBandwidthKbps;
   private startTimeMs: number = 0;
   private lastUpdatedMs: number = Date.now();
   private videoIndex: VideoStreamIndex | null = null;
@@ -50,21 +55,9 @@ export default class SimulcastUplinkPolicyNScaleLowStream implements SimulcastUp
   constructor(private selfAttendeeId: string, private logger: Logger) {
     this.optimalParameters = new DefaultVideoAndEncodeParameter(0, 0, 0, 0, true);
     this.parametersInEffect = new DefaultVideoAndEncodeParameter(0, 0, 0, 0, true);
-    this.lastUplinkBandwidthKbps = SimulcastUplinkPolicyNScaleLowStream.defaultUplinkBandwidthKbps;
-    this.currentQualityMap = this.fillEncodingParamWithBitrates([
-        {
-          maxBitrateKbps: 300,
-          scaleResolutionDownBy: 4
-        },
-        {
-          maxBitrateKbps: 0,
-          scaleResolutionDownBy: 2
-        },
-        {
-          maxBitrateKbps: 1200,
-          scaleResolutionDownBy: 1
-        },
-      ]
+    this.lastUplinkBandwidthKbps = SimulcastUplinkPolicyThreeLayers.defaultUplinkBandwidthKbps;
+    this.currentQualityMap = this.fillEncodingParamWithBitrates(
+      SimulcastUplinkPolicyThreeLayers.getDefaultEncodingParams()
     );
     this.newQualityMap = this.currentQualityMap;
   }
@@ -79,8 +72,8 @@ export default class SimulcastUplinkPolicyNScaleLowStream implements SimulcastUp
     if (this.startTimeMs === 0) {
       this.startTimeMs = Date.now();
     }
-    if (Date.now() - this.startTimeMs < SimulcastUplinkPolicyNScaleLowStream.startupDurationMs) {
-      this.lastUplinkBandwidthKbps = SimulcastUplinkPolicyNScaleLowStream.defaultUplinkBandwidthKbps;
+    if (Date.now() - this.startTimeMs < SimulcastUplinkPolicyThreeLayers.startupDurationMs) {
+      this.lastUplinkBandwidthKbps = SimulcastUplinkPolicyThreeLayers.defaultUplinkBandwidthKbps;
     } else {
       this.lastUplinkBandwidthKbps = uplinkKbps;
     }
@@ -88,61 +81,79 @@ export default class SimulcastUplinkPolicyNScaleLowStream implements SimulcastUp
       return `simulcast: uplink policy update metrics ${this.lastUplinkBandwidthKbps}`;
     });
 
-
-    let holdTime = SimulcastUplinkPolicyNScaleLowStream.holdDownDurationMs;
+    let holdTime = SimulcastUplinkPolicyThreeLayers.holdDownDurationMs;
     if (this.currentActiveStreams === SimulcastLayers.Low) {
-      holdTime = SimulcastUplinkPolicyNScaleLowStream.holdDownDurationMs * 2;
+      holdTime = SimulcastUplinkPolicyThreeLayers.holdDownDurationMs * 2;
     } else if (
+      //Reduce hold time if uplink dips below disable rate
+      (this.currentActiveStreams === SimulcastLayers.LowAndMedium &&
+        uplinkKbps <= SimulcastUplinkPolicyThreeLayers.kMidDisabledRate) ||
       (this.currentActiveStreams === SimulcastLayers.LowAndHigh &&
-        uplinkKbps <= SimulcastUplinkPolicyNScaleLowStream.kHiDisabledRate
-      )
+        uplinkKbps <= SimulcastUplinkPolicyThreeLayers.kHiDisabledRate) ||
+      (this.currentActiveStreams === SimulcastLayers.LowMediumAndHigh &&
+        uplinkKbps <= SimulcastUplinkPolicyThreeLayers.kHiAndMidDisableRate)
     ) {
-      holdTime = SimulcastUplinkPolicyNScaleLowStream.holdDownDurationMs / 2;
+      holdTime = SimulcastUplinkPolicyThreeLayers.holdDownDurationMs / 2;
     }
     if (Date.now() < this.lastUpdatedMs + holdTime) {
       return;
     }
 
+    if (this.currentActiveStreams === SimulcastLayers.High) {
+      // Don't trigger redetermination based on rate if only one simulcast stream
+      return;
+    }
+
+    // Check whether we want to disable or re-enable simulcast layer
+    if (
+      this.currentActiveStreams === SimulcastLayers.LowMediumAndHigh &&
+      uplinkKbps > SimulcastUplinkPolicyThreeLayers.kHiAndMidDisableRate
+    ) {
+      return;
+    } else if (
+      this.currentActiveStreams === SimulcastLayers.LowAndHigh &&
+      (uplinkKbps > SimulcastUplinkPolicyThreeLayers.kHiDisabledRate || uplinkKbps < 1600)
+    ) {
+      return;
+    } else if (
+      this.currentActiveStreams === SimulcastLayers.LowAndMedium &&
+      (uplinkKbps > SimulcastUplinkPolicyThreeLayers.kMidDisabledRate || uplinkKbps < 1000)
+    ) {
+      return;
+    } else if (this.currentActiveStreams === SimulcastLayers.Low && uplinkKbps < 300) {
+      return;
+    }
     this.newQualityMap = this.calculateEncodingParameters();
   }
 
   private calculateEncodingParameters(): Map<string, RTCRtpEncodingParameters> {
-    const newEncodingParameters: EncodingParams[] = [
-      {
-        maxBitrateKbps: 0,
-        scaleResolutionDownBy: 4
-      },
-      {
-        maxBitrateKbps: 0,
-        scaleResolutionDownBy: 2
-      },
-      {
-        maxBitrateKbps: 0,
-        scaleResolutionDownBy: 1
-      },
-    ];
+    const newEncodingParameters: EncodingParams[] = SimulcastUplinkPolicyThreeLayers.getDefaultEncodingParams();
 
     if (this.numParticipants >= 0 && this.numParticipants <= 2) {
       // Simulcast disabled for 2 attendee calls
       this.newActiveStreams = SimulcastLayers.High;
-      newEncodingParameters[0].maxBitrateKbps = 0;
-      newEncodingParameters[2].maxBitrateKbps = 1200;
-    } else if (this.lastUplinkBandwidthKbps >= SimulcastUplinkPolicyNScaleLowStream.kHiDisabledRate) {
-      // 320x192 + 1280x768
-      this.newActiveStreams = SimulcastLayers.LowAndHigh;
-      newEncodingParameters[0].maxBitrateKbps = this.calculateBitRateKpsForLowResolutionStream();
-      newEncodingParameters[2].maxBitrateKbps = 1200;
-    } else if (this.lastUplinkBandwidthKbps >= SimulcastUplinkPolicyNScaleLowStream.kMidDisabledRate) {
+      newEncodingParameters[2].active = true;
+    } else if (
+      this.lastUplinkBandwidthKbps > SimulcastUplinkPolicyThreeLayers.kHiAndMidDisableRate
+    ) {
+      // 320x192 + 640x384 + 1280x768
+      this.newActiveStreams = SimulcastLayers.LowMediumAndHigh;
+      newEncodingParameters[0].active = true;
+      newEncodingParameters[1].active = true;
+      newEncodingParameters[2].active = true;
+    } else if (this.lastUplinkBandwidthKbps > SimulcastUplinkPolicyThreeLayers.kHiDisabledRate) {
       // 320x192 + 640x384
       this.newActiveStreams = SimulcastLayers.LowAndHigh;
-      newEncodingParameters[0].maxBitrateKbps = this.calculateBitRateKpsForLowResolutionStream();
-      newEncodingParameters[2].maxBitrateKbps = 600;
-      newEncodingParameters[2].scaleResolutionDownBy = 2;
+      newEncodingParameters[0].active = true;
+      newEncodingParameters[2].active = true;
+    } else if (this.lastUplinkBandwidthKbps > SimulcastUplinkPolicyThreeLayers.kMidDisabledRate) {
+      this.newActiveStreams = SimulcastLayers.LowAndMedium;
+      newEncodingParameters[0].active = true;
+      newEncodingParameters[1].active = true;
     } else {
       // 320x192
       this.newActiveStreams = SimulcastLayers.Low;
-      newEncodingParameters[0].maxBitrateKbps = this.calculateBitRateKpsForLowResolutionStream();
-      newEncodingParameters[2].maxBitrateKbps = 0;
+      newEncodingParameters[0].active = true;
     }
 
     this.newQualityMap = this.fillEncodingParamWithBitrates(newEncodingParameters);
@@ -327,26 +338,32 @@ export default class SimulcastUplinkPolicyNScaleLowStream implements SimulcastUp
     return qualityString;
   }
 
-  private calculateBitRateKpsForLowResolutionStream(): number {
-    if (this.numSenders <= 4) {
-      return 300;
-    } else if (this.numSenders <= 8) {
-      return 250;
-    } else if (this.numSenders <= 12) {
-      return 200;
-    } else if (this.numSenders <= 16) {
-      return 150;
-    } else {
-      return 100;
-    }
-  }
-
   private publishEncodingSimulcastLayer(): void {
     this.forEachObserver(observer => {
       Maybe.of(observer.encodingSimulcastLayersDidChange).map(f =>
         f.bind(observer)(this.newActiveStreams)
       );
     });
+  }
+
+  private static getDefaultEncodingParams(): EncodingParams[] {
+    return [
+      {
+        active: false,
+        maxBitrateKbps: 100,
+        scaleResolutionDownBy: 4,
+      },
+      {
+        active: false,
+        maxBitrateKbps: 350,
+        scaleResolutionDownBy: 2,
+      },
+      {
+        active: false,
+        maxBitrateKbps: 1200,
+        scaleResolutionDownBy: 1,
+      },
+    ];
   }
 
   addObserver(observer: SimulcastUplinkObserver): void {

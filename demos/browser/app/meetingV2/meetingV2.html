@@ -121,6 +121,10 @@
             <div class="custom-control custom-checkbox" style="text-align: left;">
               <input type="checkbox" id="simulcast" class="custom-control-input">
               <label for="simulcast" class="custom-control-label">Enable Simulcast for Chrome</label>
+              <select id="simulcast-policy" class="custom-select" style="width:100%; display: none;">
+                <option value="default" selected>Default</option>
+                <option value="three-layers">Three Layers</option>
+              </select>
             </div>
             <div class="custom-control custom-checkbox" style="text-align: left;">
               <input type="checkbox" id="planB" class="custom-control-input">
@@ -275,7 +279,7 @@
           <label for="video-input block">Camera</label>
           <select id="video-input" class="custom-select" style="width:100%"></select>
         </div>
-        
+
       </div>
       <div class="row mt-3">
         <div class="col-12">
